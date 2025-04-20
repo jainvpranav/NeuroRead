@@ -62,12 +62,12 @@ export default function Signup() {
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 pattern-bg">
         <div className="w-full max-w-md">
           <Tabs defaultValue="signup" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            {/* <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="login" onClick={() => router.push("/login")}>
                 Login
               </TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
+            </TabsList> */}
             <TabsContent value="signup">
               <Card className="border-none shadow-lg">
                 <CardHeader className="space-y-1 flex flex-col items-center">

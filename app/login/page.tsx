@@ -1,48 +1,54 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Navbar } from "@/components/navbar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Brain, Loader2, Mail, Lock } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import axios from "axios"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Brain, Loader2, Mail, Lock } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "axios";
 
 export default function Login() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setIsLoading(true)
-  setError("")
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-  try {
-    const res = await axios.post("/api/auth/login", {
-      email,
-      password,
-    })
+    try {
+      const res = await axios.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-    if (res.status === 200) {
-      router.push("/dashboard")
+      if (res.status === 200) {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err: any) {
-    setError(err.response?.data?.error || "Something went wrong")
-  } finally {
-    setIsLoading(false)
-  }
-}
-
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -50,20 +56,24 @@ const handleSubmit = async (e: React.FormEvent) => {
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 pattern-bg">
         <div className="w-full max-w-md">
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            {/* <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup" onClick={() => router.push("/signup")}>
                 Sign Up
               </TabsTrigger>
-            </TabsList>
+            </TabsList> */}
             <TabsContent value="login">
               <Card className="border-none shadow-lg">
                 <CardHeader className="space-y-1 flex flex-col items-center">
                   <div className="size-12 rounded-full gradient-bg flex items-center justify-center mb-2">
                     <Brain className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-                  <CardDescription>Enter your credentials to access your account</CardDescription>
+                  <CardTitle className="text-2xl font-bold">
+                    Welcome back
+                  </CardTitle>
+                  <CardDescription>
+                    Enter your credentials to access your account
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {error && (
@@ -90,7 +100,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="password">Password</Label>
-                        <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                        <Link
+                          href="/forgot-password"
+                          className="text-sm text-primary hover:underline"
+                        >
                           Forgot password?
                         </Link>
                       </div>
@@ -106,7 +119,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full gradient-bg" disabled={isLoading}>
+                    <Button
+                      type="submit"
+                      className="w-full gradient-bg"
+                      disabled={isLoading}
+                    >
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -121,7 +138,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <CardFooter className="flex flex-col">
                   <div className="text-center text-sm text-muted-foreground mt-2">
                     Don&apos;t have an account?{" "}
-                    <Link href="/signup" className="text-primary hover:underline">
+                    <Link
+                      href="/signup"
+                      className="text-primary hover:underline"
+                    >
                       Sign up
                     </Link>
                   </div>
@@ -132,5 +152,5 @@ const handleSubmit = async (e: React.FormEvent) => {
         </div>
       </main>
     </div>
-  )
+  );
 }

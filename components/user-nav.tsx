@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,28 +10,37 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
-import { User, Settings, LogOut, History, LayoutDashboard } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import {
+  User,
+  Settings,
+  LogOut,
+  History,
+  LayoutDashboard,
+  Globe,
+} from "lucide-react";
 
 export function UserNav() {
-  const router = useRouter()
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null)
+  const router = useRouter();
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      setUser(JSON.parse(storedUser));
     }
-  }, [])
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user")
-    router.push("/login")
-  }
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
 
-  if (!user) return null
+  if (!user) return null;
 
   // Generate initials from name
   const initials = user.name
@@ -39,7 +48,7 @@ export function UserNav() {
     .map((part) => part[0])
     .join("")
     .toUpperCase()
-    .substring(0, 2)
+    .substring(0, 2);
 
   return (
     <DropdownMenu>
@@ -57,11 +66,17 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem onClick={() => router.push("/community")}>
+            <Globe className="mr-2 h-4 w-4" />
+            <span>Community</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/dashboard")}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
@@ -80,12 +95,14 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="text-destructive focus:text-destructive"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
-
