@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -14,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Brain, Loader2, Mail, Lock, User } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import axios from "axios"  // Import axios
 
 export default function Signup() {
   const router = useRouter()
@@ -37,19 +37,20 @@ export default function Signup() {
     }
 
     try {
-      // This is a mock signup - in a real app, you'd call an API
-      // Store user info in localStorage (use a secure auth solution in production)
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name,
-          email,
-          role,
-        }),
-      )
+      const response = await axios.post("/api/auth/signup", {
+        name,
+        email,
+        password,
+        role,
+      })
+
       router.push("/dashboard")
-    } catch (err) {
-      setError("An error occurred during signup")
+    } catch (err: any) {
+      if (err.response?.data?.error) {
+        setError(err.response.data.error)
+      } else {
+        setError("An error occurred during signup")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -181,4 +182,3 @@ export default function Signup() {
     </div>
   )
 }
-
