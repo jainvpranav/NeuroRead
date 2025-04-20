@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Brain, Loader2, Mail, Lock } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import axios from "axios"
 
 export default function Login() {
   const router = useRouter()
@@ -21,32 +22,27 @@ export default function Login() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsLoading(true)
+  setError("")
 
-    try {
-      // This is a mock login - in a real app, you'd call an API
-      if (email === "demo@example.com" && password === "password") {
-        // Store user info in localStorage (use a secure auth solution in production)
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            name: "Demo User",
-            email: "demo@example.com",
-          }),
-        )
-        router.push("/dashboard")
-      } else {
-        setError("Invalid email or password. Try demo@example.com / password")
-      }
-    } catch (err) {
-      setError("An error occurred during login")
-    } finally {
-      setIsLoading(false)
+  try {
+    const res = await axios.post("/api/auth/login", {
+      email,
+      password,
+    })
+
+    if (res.status === 200) {
+      router.push("/dashboard")
     }
+  } catch (err: any) {
+    setError(err.response?.data?.error || "Something went wrong")
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -129,11 +125,6 @@ export default function Login() {
                       Sign up
                     </Link>
                   </div>
-                  <div className="text-center text-xs text-muted-foreground mt-4 p-2 bg-muted/50 rounded-lg">
-                    <p className="font-medium mb-1">Demo credentials:</p>
-                    <p>Email: demo@example.com</p>
-                    <p>Password: password</p>
-                  </div>
                 </CardFooter>
               </Card>
             </TabsContent>
@@ -143,4 +134,3 @@ export default function Login() {
     </div>
   )
 }
-
