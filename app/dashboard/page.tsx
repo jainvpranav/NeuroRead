@@ -29,6 +29,8 @@ export default function Dashboard() {
     user_id: Number;
     name: string;
     profile_pic_link: string;
+    email: string;
+    role: string;
   } | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -47,7 +49,8 @@ export default function Dashboard() {
           router.push("/login");
         }
       } catch (err: any) {
-        setError(err.response?.data?.error || "Something went wrong");
+        router.push("/login");
+        // setError(err.response?.data?.error || "Something went wrong")
       }
     };
     // Get recent analyses
@@ -377,7 +380,4 @@ export default function Dashboard() {
       </main>
     </div>
   );
-}
-function setError(arg0: any) {
-  throw new Error("Function not implemented.");
 }

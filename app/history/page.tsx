@@ -1,15 +1,36 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Navbar } from "@/components/navbar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Eye, Download, Search, Filter, SortAsc, SortDesc, Trash2 } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Eye,
+  Download,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  Trash2,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,84 +38,121 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import axios from "axios";
 
 type Analysis = {
-  id: string
-  studentName: string
-  date: string
-  imageUrl: string
+  id: string;
+  studentName: string;
+  date: string;
+  imageUrl: string;
   results: {
-    dyslexiaScore: number
-    motorVariability: number
-    orthographicIrregularity: number
-    writingDynamics: number
-  }
-}
+    dyslexiaScore: number;
+    motorVariability: number;
+    orthographicIrregularity: number;
+    writingDynamics: number;
+  };
+};
 
 export default function HistoryPage() {
-  const router = useRouter()
-  const [history, setHistory] = useState<Analysis[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-  const [sortBy, setSortBy] = useState<"date" | "score" | "name">("date")
-  const [language, setLanguage] = useState("en")
+  const router = useRouter();
+  const [user, setUser] = useState<{
+    user_id: Number;
+    name: string;
+    profile_pic_link: string;
+    email: string;
+    role: string;
+  } | null>(null);
+  const [history, setHistory] = useState<Analysis[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortBy, setSortBy] = useState<"date" | "score" | "name">("date");
+  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
-    const user = localStorage.getItem("user")
-    if (!user) {
-      router.push("/login")
-      return
-    }
-
-    const storedHistory = JSON.parse(localStorage.getItem("analysisHistory") || "[]")
-    setHistory(storedHistory)
-  }, [router])
+    const getUserDetails = async () => {
+      try {
+        const res = await axios.get("/api/auth/cookies");
+        if (res.status === 200) {
+          setUser(JSON.parse(res.data.user.value).user);
+        } else {
+          router.push("/login");
+        }
+      } catch (err: any) {
+        router.push("/login");
+        // setError(err.response?.data?.error || "Something went wrong")
+      }
+    };
+    getUserDetails();
+    const storedHistory = JSON.parse(
+      localStorage.getItem("analysisHistory") || "[]"
+    );
+    setHistory(storedHistory);
+  }, [router]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getRiskLevelClass = (score: number) => {
-    if (score < 30) return "text-green-500"
-    if (score < 70) return "text-yellow-500"
-    return "text-red-500"
-  }
+    if (score < 30) return "text-green-500";
+    if (score < 70) return "text-yellow-500";
+    return "text-red-500";
+  };
 
   const getRiskLevelBadge = (score: number) => {
-    if (score < 30) return { text: "Low Risk", color: "bg-green-500/10 text-green-500 border-green-500/20" }
-    if (score < 70) return { text: "Moderate Risk", color: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" }
-    return { text: "High Risk", color: "bg-red-500/10 text-red-500 border-red-500/20" }
-  }
+    if (score < 30)
+      return {
+        text: "Low Risk",
+        color: "bg-green-500/10 text-green-500 border-green-500/20",
+      };
+    if (score < 70)
+      return {
+        text: "Moderate Risk",
+        color: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+      };
+    return {
+      text: "High Risk",
+      color: "bg-red-500/10 text-red-500 border-red-500/20",
+    };
+  };
 
   const deleteAnalysis = (id: string) => {
-    const updatedHistory = history.filter((item) => item.id !== id)
-    setHistory(updatedHistory)
-    localStorage.setItem("analysisHistory", JSON.stringify(updatedHistory))
-  }
+    const updatedHistory = history.filter((item) => item.id !== id);
+    setHistory(updatedHistory);
+    localStorage.setItem("analysisHistory", JSON.stringify(updatedHistory));
+  };
 
   const filteredAndSortedHistory = [...history]
-    .filter((item) => item.studentName.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((item) =>
+      item.studentName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     .sort((a, b) => {
       if (sortBy === "date") {
         return sortOrder === "asc"
           ? new Date(a.date).getTime() - new Date(b.date).getTime()
-          : new Date(b.date).getTime() - new Date(a.date).getTime()
+          : new Date(b.date).getTime() - new Date(a.date).getTime();
       } else if (sortBy === "score") {
         return sortOrder === "asc"
           ? a.results.dyslexiaScore - b.results.dyslexiaScore
-          : b.results.dyslexiaScore - a.results.dyslexiaScore
+          : b.results.dyslexiaScore - a.results.dyslexiaScore;
       } else {
         return sortOrder === "asc"
           ? a.studentName.localeCompare(b.studentName)
-          : b.studentName.localeCompare(a.studentName)
+          : b.studentName.localeCompare(a.studentName);
       }
-    })
+    });
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -103,9 +161,14 @@ export default function HistoryPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl font-bold">Analysis History</h1>
-            <p className="text-muted-foreground">View and manage all previous handwriting analyses</p>
+            <p className="text-muted-foreground">
+              View and manage all previous handwriting analyses
+            </p>
           </div>
-          <Button onClick={() => router.push("/dashboard")} className="gradient-bg rounded-full">
+          <Button
+            onClick={() => router.push("/dashboard")}
+            className="gradient-bg rounded-full"
+          >
             New Analysis
           </Button>
         </div>
@@ -115,7 +178,9 @@ export default function HistoryPage() {
             <div className="flex flex-col md:flex-row gap-4 justify-between">
               <div>
                 <CardTitle>Previous Analyses</CardTitle>
-                <CardDescription>{filteredAndSortedHistory.length} total records</CardDescription>
+                <CardDescription>
+                  {filteredAndSortedHistory.length} total records
+                </CardDescription>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                 <div className="relative flex-1">
@@ -129,7 +194,10 @@ export default function HistoryPage() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
+                  <Select
+                    value={sortBy}
+                    onValueChange={(value) => setSortBy(value as any)}
+                  >
                     <SelectTrigger className="w-[130px]">
                       <Filter className="h-4 w-4 mr-2" />
                       <SelectValue placeholder="Sort by" />
@@ -143,9 +211,15 @@ export default function HistoryPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                    onClick={() =>
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    }
                   >
-                    {sortOrder === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
+                    {sortOrder === "asc" ? (
+                      <SortAsc className="h-4 w-4" />
+                    ) : (
+                      <SortDesc className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -155,7 +229,10 @@ export default function HistoryPage() {
           {/* Language Selector */}
           <div className="px-6 py-4 flex items-center gap-2">
             <span className="text-sm font-medium">View in:</span>
-            <Select value={language} onValueChange={(value) => setLanguage(value)}>
+            <Select
+              value={language}
+              onValueChange={(value) => setLanguage(value)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
@@ -187,18 +264,32 @@ export default function HistoryPage() {
                   </TableHeader>
                   <TableBody>
                     {filteredAndSortedHistory.map((item) => {
-                      const riskBadge = getRiskLevelBadge(item.results.dyslexiaScore)
+                      const riskBadge = getRiskLevelBadge(
+                        item.results.dyslexiaScore
+                      );
                       return (
-                        <TableRow key={item.id} className="hover:bg-muted/30 transition-colors">
-                          <TableCell className="font-medium">{item.studentName}</TableCell>
+                        <TableRow
+                          key={item.id}
+                          className="hover:bg-muted/30 transition-colors"
+                        >
+                          <TableCell className="font-medium">
+                            {item.studentName}
+                          </TableCell>
                           <TableCell>{formatDate(item.date)}</TableCell>
                           <TableCell>
-                            <span className={getRiskLevelClass(item.results.dyslexiaScore)}>
+                            <span
+                              className={getRiskLevelClass(
+                                item.results.dyslexiaScore
+                              )}
+                            >
                               {item.results.dyslexiaScore}%
                             </span>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className={riskBadge.color}>
+                            <Badge
+                              variant="outline"
+                              className={riskBadge.color}
+                            >
                               {riskBadge.text}
                             </Badge>
                           </TableCell>
@@ -208,18 +299,28 @@ export default function HistoryPage() {
                                 variant="ghost"
                                 size="sm"
                                 className="h-8 w-8 p-0"
-                                onClick={() => router.push(`/results/${item.id}`)}
+                                onClick={() =>
+                                  router.push(`/results/${item.id}`)
+                                }
                               >
                                 <Eye className="h-4 w-4" />
                                 <span className="sr-only">View</span>
                               </Button>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                              >
                                 <Download className="h-4 w-4" />
                                 <span className="sr-only">Download</span>
                               </Button>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                  >
                                     <span className="sr-only">Open menu</span>
                                     <svg
                                       width="15"
@@ -240,11 +341,19 @@ export default function HistoryPage() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuItem onClick={() => router.push(`/results/${item.id}`)}>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      router.push(`/results/${item.id}`)
+                                    }
+                                  >
                                     View details
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-                                  <DropdownMenuItem>Share report</DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    Export as PDF
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem>
+                                    Share report
+                                  </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
                                     className="text-destructive focus:text-destructive"
@@ -258,7 +367,7 @@ export default function HistoryPage() {
                             </div>
                           </TableCell>
                         </TableRow>
-                      )
+                      );
                     })}
                   </TableBody>
                 </Table>
@@ -268,7 +377,9 @@ export default function HistoryPage() {
                 {searchTerm ? (
                   <div className="space-y-2">
                     <Search className="h-8 w-8 text-muted-foreground mx-auto" />
-                    <p className="text-muted-foreground">No results found for "{searchTerm}"</p>
+                    <p className="text-muted-foreground">
+                      No results found for "{searchTerm}"
+                    </p>
                     <Button variant="outline" onClick={() => setSearchTerm("")}>
                       Clear Search
                     </Button>
@@ -279,10 +390,16 @@ export default function HistoryPage() {
                       <Search className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-lg font-medium">No analysis history found</p>
-                      <p className="text-muted-foreground mb-4">Upload your first handwriting sample to get started</p>
+                      <p className="text-lg font-medium">
+                        No analysis history found
+                      </p>
+                      <p className="text-muted-foreground mb-4">
+                        Upload your first handwriting sample to get started
+                      </p>
                       <Link href="/dashboard" passHref>
-                        <Button className="gradient-bg rounded-full">Upload Your First Sample</Button>
+                        <Button className="gradient-bg rounded-full">
+                          Upload Your First Sample
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -293,6 +410,5 @@ export default function HistoryPage() {
         </Card>
       </main>
     </div>
-  )
+  );
 }
-

@@ -8,17 +8,36 @@ import { useEffect, useState } from "react";
 import { UserNav } from "@/components/user-nav";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import axios from "axios";
+import router from "next/router";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<{
+    user_id: Number;
+    name: string;
+    profile_pic_link: string;
+    email: string;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user);
-
+    const getUserDetails = async () => {
+      try {
+        const res = await axios.get("/api/auth/cookies");
+        if (res.status === 200) {
+          setUser(JSON.parse(res.data.user.value).user);
+          setIsLoggedIn(true);
+        } else {
+          router.push("/login");
+        }
+      } catch (err: any) {
+        // console.error("Error");
+      }
+    };
+    getUserDetails();
     // Add scroll event listener
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -87,8 +106,8 @@ export function Navbar() {
                   <Button
                     variant="outline"
                     className="justify-start w-full"
-                    onClick={() => {
-                      localStorage.removeItem("user");
+                    onClick={async () => {
+                      const res = await axios.delete("/api/auth/cookies");
                       window.location.href = "/login";
                     }}
                   >

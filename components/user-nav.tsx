@@ -21,22 +21,36 @@ import {
   LayoutDashboard,
   Globe,
 } from "lucide-react";
+import axios from "axios";
 
 export function UserNav() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<{
+    user_id: Number;
+    name: string;
+    profile_pic_link: string;
+    email: string;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const getUserDetails = async () => {
+      try {
+        const res = await axios.get("/api/auth/cookies");
+        if (res.status === 200) {
+          setUser(JSON.parse(res.data.user.value).user);
+        } else {
+          router.push("/login");
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Something went wrong");
+      }
+    };
+    getUserDetails();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
+  const handleLogout = async () => {
+    const res = await axios.delete("/api/auth/cookies");
     router.push("/login");
   };
 
@@ -105,4 +119,7 @@ export function UserNav() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+function setError(arg0: any) {
+  throw new Error("Function not implemented.");
 }

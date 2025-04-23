@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
 import { supabase } from "@/lib/supabase";
-import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, name, role } = await req.json();
 
     const { data: existingUser } = await supabase
       .from("users")
@@ -16,16 +15,16 @@ export async function POST(req: NextRequest) {
     if (existingUser) {
       return NextResponse.json(
         { error: "Email already in use" },
-        { status: 400 }
+        { status: 409 }
       );
     }
 
-    const id = uuidv4();
-
     const { data: user, error } = await supabase
       .from("users")
-      .insert([{ email: email, passcode: password, name: name }])
+      .insert([{ email: email, passcode: password, name: name, role: role }])
       .select();
+
+    console.log(user);
 
     if (error || !user) {
       return NextResponse.json(
