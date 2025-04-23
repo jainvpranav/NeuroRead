@@ -21,12 +21,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import axios from "axios";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<{
+    user_id: Number;
+    name: string;
+    profile_pic_link: string;
+  } | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [studentName, setStudentName] = useState("");
@@ -35,20 +38,23 @@ export default function Dashboard() {
   const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
 
   useEffect(() => {
-    // Check if user is logged in
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login");
-    } else {
-      setUser(JSON.parse(storedUser));
-
-      // Get recent analyses
-      const history = JSON.parse(
-        localStorage.getItem("analysisHistory") || "[]"
-      );
-      setRecentAnalyses(history.slice(0, 3));
-    }
-  }, [router]);
+    const getUserDetails = async () => {
+      try {
+        const res = await axios.get("/api/auth/cookies");
+        if (res.status === 200) {
+          setUser(JSON.parse(res.data.user.value).user);
+        } else {
+          router.push("/login");
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Something went wrong");
+      }
+    };
+    // Get recent analyses
+    const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
+    setRecentAnalyses(history.slice(0, 3));
+    getUserDetails();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -119,7 +125,7 @@ export default function Dashboard() {
     return "bg-red-500";
   };
 
-  if (!user) return null;
+  // if (!user) return null;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -371,4 +377,7 @@ export default function Dashboard() {
       </main>
     </div>
   );
+}
+function setError(arg0: any) {
+  throw new Error("Function not implemented.");
 }

@@ -1,17 +1,16 @@
-import { NextRequest, NextResponse } from "next/server"
-import { parse } from "cookie"
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const cookies = req.cookies
-  const userId = cookies.get("user_id")
+  const cookies = req.cookies;
+  const userId = cookies.get("user");
 
   if (!userId) {
-    return NextResponse.redirect(new URL("/login", req.url))
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard', '/profile', '/settings'],
-}
+  matcher: ["/profile", "/settings"],
+};
