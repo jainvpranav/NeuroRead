@@ -20,36 +20,29 @@ export default function Community() {
   const router = useRouter();
   const [posts, setPosts] = useState([]);
   const [postLike, setPostLike] = useState([false]);
+  const getPosts = async () => {
+    const posts = await axios.get("/api/posts");
+    if (posts.status === 200) {
+      setPosts(posts.data);
+      setPostLike(
+        posts.data.map((post: any) => {
+          return false;
+        })
+      );
+    }
+  };
   useEffect(() => {
-    const getPosts = async () => {
-      const posts = await axios.get("/api/posts");
-      if (posts.status === 200) {
-        setPosts(posts.data);
-        setPostLike(
-          posts.data.map((post: any) => {
-            return false;
-          })
-        );
-      }
-    };
     getPosts();
   }, []);
 
   function handleLike(e: any, index: number): any {
+    // setIsLiking(true);
     e.preventDefault();
     setPostLike((currentLikes: any) => {
       const newLikes = [...currentLikes]; // Create a copy of the array
       newLikes[index] = !currentLikes[index]; // Modify the copy
       return newLikes; // Return the modified copy
     });
-
-    setPosts((prevPosts: any) =>
-      prevPosts.map((post: any, i: number) =>
-        i === index
-          ? { ...post, like: post.like + (postLike[index] ? -1 : 1) }
-          : post
-      )
-    );
 
     const like = axios.post("/api/posts", {
       type: "like",
@@ -60,6 +53,14 @@ export default function Community() {
           like: posts[index]["likes"],
         },
       },
+    });
+    console.log(like);
+    getPosts().finally(() => {
+      setPostLike((currentLikes: any) => {
+        const newLikes = [...currentLikes]; // Create a copy of the array
+        newLikes[index] = !currentLikes[index]; // Modify the copy
+        return newLikes; // Return the modified copy
+      });
     });
   }
 
@@ -101,8 +102,7 @@ export default function Community() {
                         handleLike(event, index);
                       }}
                     >
-                      {postLike[index] && <Heart color="red" />}
-                      {!postLike[index] && <Heart color="white" />}
+                      {<Heart color={postLike[index] ? "red" : "white"} />}
                       <span className="text-white">{post.likes}</span>
                     </Button>
                     <Button className="bg-transparent hover:bg-transparent">

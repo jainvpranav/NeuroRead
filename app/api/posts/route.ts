@@ -34,37 +34,19 @@ export async function POST(req: NextRequest) {
     const { type, data } = await req.json();
     console.log(type, data);
     if (type === "like") {
-      if (data.like) {
-        data.post_data.like += 1;
-        console.log(data.post_data.like);
-        const { data: result, error } = await supabase
-          .from("posts")
-          .update({ like: data.post_data.like })
-          .eq("post_id", data.post_data.post_id)
-          .select();
-        if (error) {
-          return NextResponse.json({ error: error }, { status: 501 });
-        }
-        if (result) {
-          return NextResponse.json({ message: "Yay 204" }, { status: 204 });
-        }
-      } else {
-        data.post_data.like -= 1;
-        console.log(data.post_data.like);
-        const { data: result, error } = await supabase
-          .from("posts")
-          .update({ like: data.post_data.like })
-          .eq("post_id", data.post_data.post_id)
-          .select();
-        if (error) {
-          NextResponse.json({ error: error }, { status: 501 });
-        }
-        if (result) {
-          return NextResponse.json({ message: "Yay 204" }, { status: 204 });
-        }
+      data.post_data.like += 1;
+      console.log(data.post_data.like);
+      const { data: result, error } = await supabase
+        .from("posts")
+        .update({ likes: data.post_data.like })
+        .eq("post_id", data.post_data.post_id)
+        .select();
+      if (error || !result) {
+        return NextResponse.json({ error: error }, { status: 501 });
       }
+      return NextResponse.json({ status: 204 });
     }
-    return NextResponse.json({ error: "Some Error" }, { status: 501 });
+    return NextResponse.json({ error: "Some Error" }, { status: 400 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
