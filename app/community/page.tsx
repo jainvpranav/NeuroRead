@@ -15,6 +15,7 @@ import { Heart, Share2 } from "lucide-react";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import CreatePostDialog from "./createPostDialog";
 
 export default function Community() {
   const router = useRouter();
@@ -43,18 +44,11 @@ export default function Community() {
       newLikes[index] = !currentLikes[index]; // Modify the copy
       return newLikes; // Return the modified copy
     });
-
-    const like = axios.post("/api/posts", {
-      type: "like",
-      data: {
-        like: postLike[index],
-        post_data: {
-          post_id: posts[index]["post_id"],
-          like: posts[index]["likes"],
-        },
-      },
-    });
-    console.log(like);
+    const formData = new FormData();
+    formData.append("type", "like");
+    formData.append("post_id", posts[index]["post_id"]);
+    formData.append("post_likes", posts[index]["likes"]);
+    const like = axios.post("/api/posts", formData);
     getPosts().finally(() => {
       setPostLike((currentLikes: any) => {
         const newLikes = [...currentLikes]; // Create a copy of the array
@@ -67,7 +61,16 @@ export default function Community() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
+
       <main className="flex-1 container py-8 border-2 border-indigo-500 overflow-auto ">
+        <div className="flex justify-between items-center">
+          {/* <Button className="ml-auto bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold px-6 py-2 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300 m-1">
+            Create Post
+            </Button> */}
+          <div className="p-4">
+            <CreatePostDialog />
+          </div>
+        </div>
         <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
           {posts.length >= 1 ? (
             posts.map((post: any, index: number) => {
