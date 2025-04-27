@@ -87,10 +87,6 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push("/community")}>
-            <Globe className="mr-2 h-4 w-4" />
-            <span>Community</span>
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/dashboard")}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Dashboard</span>
@@ -98,6 +94,10 @@ export function UserNav() {
           <DropdownMenuItem onClick={() => router.push("/history")}>
             <History className="mr-2 h-4 w-4" />
             <span>History</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/community")}>
+            <Globe className="mr-2 h-4 w-4" />
+            <span>Community</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />

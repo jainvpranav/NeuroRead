@@ -79,14 +79,6 @@ export function Navbar() {
             <div className="flex flex-col gap-4 mt-8">
               {isLoggedIn ? (
                 <>
-                  <Link href="/community" passHref>
-                    <Button
-                      variant={pathname === "/community" ? "default" : "ghost"}
-                      className="justify-start w-full"
-                    >
-                      Community
-                    </Button>
-                  </Link>
                   <Link href="/dashboard" passHref>
                     <Button
                       variant={pathname === "/dashboard" ? "default" : "ghost"}
@@ -101,6 +93,14 @@ export function Navbar() {
                       className="justify-start w-full"
                     >
                       History
+                    </Button>
+                  </Link>
+                  <Link href="/community" passHref>
+                    <Button
+                      variant={pathname === "/community" ? "default" : "ghost"}
+                      className="justify-start w-full"
+                    >
+                      Community
                     </Button>
                   </Link>
                   <Button
@@ -142,14 +142,6 @@ export function Navbar() {
         <nav className="ml-auto hidden md:flex items-center gap-1">
           {isLoggedIn ? (
             <>
-              <Link href="/community" passHref>
-                <Button
-                  variant={pathname === "/community" ? "default" : "ghost"}
-                  className="rounded-full"
-                >
-                  Community
-                </Button>
-              </Link>
               <Link href="/dashboard" passHref>
                 <Button
                   variant={pathname === "/dashboard" ? "default" : "ghost"}
@@ -164,6 +156,14 @@ export function Navbar() {
                   className="rounded-full"
                 >
                   History
+                </Button>
+              </Link>
+              <Link href="/community" passHref>
+                <Button
+                  variant={pathname === "/community" ? "default" : "ghost"}
+                  className="rounded-full"
+                >
+                  Community
                 </Button>
               </Link>
               <UserNav />

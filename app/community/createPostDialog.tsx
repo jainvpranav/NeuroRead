@@ -71,12 +71,14 @@ export default function CreatePostDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="ml-auto bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-2xl px-6 py-2 shadow-md hover:scale-105 transition-transform m-1">
-          Create Post
-          <StickyNote />
-        </Button>
-      </DialogTrigger>
+      <div className="flex justify-end">
+        <DialogTrigger asChild>
+          <Button className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 gradient-bg rounded-full ">
+            Create Post
+            <StickyNote />
+          </Button>
+        </DialogTrigger>
+      </div>
 
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
