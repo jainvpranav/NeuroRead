@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
@@ -22,12 +22,27 @@ import { Brain, Loader2, Mail, Lock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
 
-export default function Login() {
+export default function Login() { 
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+useEffect(() => {
+  const checkUser = async () => {
+    console.log("checking if the user is present");
+    const cookies = await axios.get("api/auth/cookies");
+    console.log(cookies);
+    if (cookies.data.user) {
+      router.push("/dashboard");
+    }
+    setIsLoading(false);
+  };
+  checkUser();
+}, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const cookie = serialize("user", JSON.stringify({ user }), {
       httpOnly: true,
       path: "/",
-      // maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
