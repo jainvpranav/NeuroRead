@@ -103,6 +103,7 @@ export default function Dashboard() {
             motorVariability: Math.random() * 5 + 1,
             orthographicIrregularity: Math.random() * 5 + 1,
             writingDynamics: Math.random() * 5 + 1,
+            id: parseInt(Date.now().toString()),
           },
         };
 
