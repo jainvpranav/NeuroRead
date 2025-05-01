@@ -54,9 +54,16 @@ export default function Dashboard() {
       }
     };
     // Get recent analyses
-    const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
-    setRecentAnalyses(history.slice(0, 3));
+    const diagnosis = async () => {
+      const res = await axios.get("/api/dashboard");
+      if (res.status === 200) {
+        setRecentAnalyses(res.data.diagnosis);
+      } else setRecentAnalyses([]);
+    };
+    // const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
+    // setRecentAnalyses(history.slice(0, 3));
     getUserDetails();
+    diagnosis();
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,12 +80,20 @@ export default function Dashboard() {
     }
   };
 
+  const uploadImage = () => {
+    const formData = new FormData();
+    if (selectedFile) formData.append("file", selectedFile);
+    formData.append("studentName", studentName.trim());
+    if (user) formData.append("currentUserId", user.user_id.toString());
+    const fileUploaded = axios.post("/api/dashboard", formData);
+    console.log(fileUploaded);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile || !studentName) return;
-
     setIsUploading(true);
-
+    const newAnalysis: any = uploadImage();
     // Simulate upload and processing with progress
     let progress = 0;
     const interval = setInterval(() => {
@@ -89,31 +104,31 @@ export default function Dashboard() {
         clearInterval(interval);
 
         // Save analysis to history
-        const history = JSON.parse(
-          localStorage.getItem("analysisHistory") || "[]"
-        );
-        const newAnalysis = {
-          id: Date.now().toString(),
-          studentName,
-          date: new Date().toISOString(),
-          imageUrl: previewUrl,
-          // Updated metrics
-          results: {
-            dyslexiaScore: Math.floor(Math.random() * 100),
-            motorVariability: Math.random() * 5 + 1,
-            orthographicIrregularity: Math.random() * 5 + 1,
-            writingDynamics: Math.random() * 5 + 1,
-            id: parseInt(Date.now().toString()),
-          },
-        };
+        // const history = JSON.parse(
+        //   localStorage.getItem("analysisHistory") || "[]"
+        // );
+        // const newAnalysis = {
+        //   id: Date.now().toString(),
+        //   studentName,
+        //   date: new Date().toISOString(),
+        //   imageUrl: previewUrl,
+        //   // Updated metrics
+        //   results: {
+        //     dyslexiaScore: Math.floor(Math.random() * 100),
+        //     motorVariability: Math.random() * 5 + 1,
+        //     orthographicIrregularity: Math.random() * 5 + 1,
+        //     writingDynamics: Math.random() * 5 + 1,
+        //     id: parseInt(Date.now().toString()),
+        //   },
+        // };
 
-        history.unshift(newAnalysis);
-        localStorage.setItem("analysisHistory", JSON.stringify(history));
+        // history.unshift(newAnalysis);
+        // localStorage.setItem("analysisHistory", JSON.stringify(history));
 
         // Navigate to results page
-        router.push(`/results/${newAnalysis.id}`);
+        router.push(`/results/${newAnalysis.diagnose_id}`);
       }
-    }, 50);
+    }, 500);
   };
 
   const formatDate = (dateString: string) => {
@@ -128,8 +143,6 @@ export default function Dashboard() {
     if (score < 70) return "bg-yellow-500";
     return "bg-red-500";
   };
-
-  // if (!user) return null;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -288,9 +301,11 @@ export default function Dashboard() {
                 <div className="space-y-4">
                   {recentAnalyses.map((analysis) => (
                     <div
-                      key={analysis.id}
+                      key={analysis.diagnose_id}
                       className="p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => router.push(`/results/${analysis.id}`)}
+                      onClick={() =>
+                        router.push(`/results/${analysis.diagnose_id}`)
+                      }
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -298,23 +313,25 @@ export default function Dashboard() {
                             {analysis.studentName}
                           </h4>
                           <p className="text-xs text-muted-foreground">
-                            {formatDate(analysis.date)}
+                            {formatDate(analysis.diagnosed_at)}
                           </p>
                         </div>
                         <Badge
                           className={`${getRiskLevelClass(
-                            analysis.results.dyslexiaScore
+                            analysis.dyslexia_risk_score
                           )} hover:${getRiskLevelClass(
-                            analysis.results.dyslexiaScore
+                            analysis.dyslexia_risk_score
                           )}`}
                         >
-                          {analysis.results.dyslexiaScore}%
+                          {analysis.dyslexia_risk_score}%
                         </Badge>
                       </div>
                       <div className="relative h-20 w-full rounded-md overflow-hidden border">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={analysis.imageUrl || "/placeholder.svg"}
+                          src={
+                            analysis.image_uploaded_link || "/placeholder.svg"
+                          }
                           alt="Handwriting sample"
                           className="w-full h-full object-cover"
                         />

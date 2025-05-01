@@ -49,12 +49,12 @@ import {
 import axios from "axios";
 
 type Analysis = {
-  id: string;
+  diagnose_id: string;
   studentName: string;
-  date: string;
-  imageUrl: string;
+  diagnosed_at: string;
+  image_uploaded_link: string;
+  dyslexia_risk_score: number;
   results: {
-    dyslexiaScore: number;
     motorVariability: number;
     orthographicIrregularity: number;
     writingDynamics: number;
@@ -90,11 +90,14 @@ export default function HistoryPage() {
         // setError(err.response?.data?.error || "Something went wrong")
       }
     };
+    const diagnosis = async () => {
+      const res = await axios.get("/api/history");
+      if (res.status === 200) {
+        setHistory(res.data.diagnosis);
+      } else setHistory([]);
+    };
     getUserDetails();
-    const storedHistory = JSON.parse(
-      localStorage.getItem("analysisHistory") || "[]"
-    );
-    setHistory(storedHistory);
+    diagnosis();
   }, [router]);
 
   const formatDate = (dateString: string) => {
@@ -129,7 +132,7 @@ export default function HistoryPage() {
   };
 
   const deleteAnalysis = (id: string) => {
-    const updatedHistory = history.filter((item) => item.id !== id);
+    const updatedHistory = history.filter((item) => item.diagnose_id !== id);
     setHistory(updatedHistory);
     localStorage.setItem("analysisHistory", JSON.stringify(updatedHistory));
   };
@@ -141,12 +144,14 @@ export default function HistoryPage() {
     .sort((a, b) => {
       if (sortBy === "date") {
         return sortOrder === "asc"
-          ? new Date(a.date).getTime() - new Date(b.date).getTime()
-          : new Date(b.date).getTime() - new Date(a.date).getTime();
+          ? new Date(a.diagnosed_at).getTime() -
+              new Date(b.diagnosed_at).getTime()
+          : new Date(b.diagnosed_at).getTime() -
+              new Date(a.diagnosed_at).getTime();
       } else if (sortBy === "score") {
         return sortOrder === "asc"
-          ? a.results.dyslexiaScore - b.results.dyslexiaScore
-          : b.results.dyslexiaScore - a.results.dyslexiaScore;
+          ? a.dyslexia_risk_score - b.dyslexia_risk_score
+          : b.dyslexia_risk_score - a.dyslexia_risk_score;
       } else {
         return sortOrder === "asc"
           ? a.studentName.localeCompare(b.studentName)
@@ -265,24 +270,24 @@ export default function HistoryPage() {
                   <TableBody>
                     {filteredAndSortedHistory.map((item) => {
                       const riskBadge = getRiskLevelBadge(
-                        item.results.dyslexiaScore
+                        item.dyslexia_risk_score
                       );
                       return (
                         <TableRow
-                          key={item.id}
+                          key={item.diagnose_id}
                           className="hover:bg-muted/30 transition-colors"
                         >
                           <TableCell className="font-medium">
                             {item.studentName}
                           </TableCell>
-                          <TableCell>{formatDate(item.date)}</TableCell>
+                          <TableCell>{formatDate(item.diagnosed_at)}</TableCell>
                           <TableCell>
                             <span
                               className={getRiskLevelClass(
-                                item.results.dyslexiaScore
+                                item.dyslexia_risk_score
                               )}
                             >
-                              {item.results.dyslexiaScore}%
+                              {item.dyslexia_risk_score}%
                             </span>
                           </TableCell>
                           <TableCell>
@@ -300,7 +305,7 @@ export default function HistoryPage() {
                                 size="sm"
                                 className="h-8 w-8 p-0"
                                 onClick={() =>
-                                  router.push(`/results/${item.id}`)
+                                  router.push(`/results/${item.diagnose_id}`)
                                 }
                               >
                                 <Eye className="h-4 w-4" />
@@ -343,7 +348,9 @@ export default function HistoryPage() {
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuItem
                                     onClick={() =>
-                                      router.push(`/results/${item.id}`)
+                                      router.push(
+                                        `/results/${item.diagnose_id}`
+                                      )
                                     }
                                   >
                                     View details
@@ -357,7 +364,9 @@ export default function HistoryPage() {
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
                                     className="text-destructive focus:text-destructive"
-                                    onClick={() => deleteAnalysis(item.id)}
+                                    onClick={() =>
+                                      deleteAnalysis(item.diagnose_id)
+                                    }
                                   >
                                     <Trash2 className="h-4 w-4 mr-2" />
                                     Delete record
