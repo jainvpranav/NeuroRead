@@ -53,6 +53,7 @@ export default function ResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  // get the results 
   const router = useRouter();
   const [user, setUser] = useState<{
     user_id: Number;
@@ -64,31 +65,17 @@ export default function ResultsPage({
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in
-    const getUserDetails = async () => {
-      try {
-        const res = await axios.get("/api/auth/cookies");
-        if (res.status === 200) {
-          setUser(JSON.parse(res.data.user.value).user);
-        } else {
-          router.push("/login");
-        }
-      } catch (err: any) {
-        router.push("/login");
-        // setError(err.response?.data?.error || "Something went wrong")
-      }
-    };
+    
 
-    // Get analysis from history
-    const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
-    const foundAnalysis = history.find((item: Analysis) => item.id === id);
+    // // Get analysis from history
+    // const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
+    // const foundAnalysis = history.find((item: Analysis) => item.id === id);
 
-    if (foundAnalysis) {
-      setAnalysis(foundAnalysis);
-    } else {
-      router.push("/dashboard");
-    }
-    getUserDetails();
+    // if (foundAnalysis) {
+    //   setAnalysis(foundAnalysis);
+    // } else {
+    //   router.push("/dashboard");
+    // }
   }, [id, router]);
 
   if (!analysis) {

@@ -44,7 +44,7 @@ export default function Signup() {
         role,
       })
 
-      router.push("/dashboard")
+      router.push("/login")
     } catch (err: any) {
       if (err.response?.data?.error) {
         setError(err.response.data.error)

@@ -27,6 +27,9 @@ export async function POST(req: NextRequest) {
     console.log(user);
 
     if (error || !user) {
+      if(error) {
+        console.log(error);
+      }
       return NextResponse.json(
         { error: "Failed to create user" },
         { status: 500 }

@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 // import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
 
 export async function GET(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const user = cookieStore.get("user");
     const { data: diagnosis, error: diagnosis_error } = await supabase
       .from("diagnosis")
-      .select("*");
+      .select("*")
+      .eq("fk_user_id", JSON.parse(user?.value?? "{}").user.user_id);
     if (diagnosis_error && !diagnosis) {
       return NextResponse.json(
         { error: "No Diagnosis present" },
@@ -87,15 +91,14 @@ export async function POST(req: NextRequest) {
           { status: 500 }
         );
       } else {
-        if (studentDetail ? studentDetail.length === 0 : 0) {
+        if (studentDetail? studentDetail.length === 0 : 0) {
           const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
             await supabase
               .from("diagnosis")
               .insert({
-                // More Fields to be added
-                // diagnosed_at: Date.now(),
+                fk_user_id: currentUserId,
                 image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
-                fk_student_id: uploadedStudentDetails.student_id,
+                fk_student_id: uploadedStudentDetails[0].student_id,
               })
               .select();
           console.log("diagnosis_uploaded", diagnosis_uploaded);
@@ -114,10 +117,9 @@ export async function POST(req: NextRequest) {
             await supabase
               .from("diagnosis")
               .insert({
-                // More Fields to be added
-                // diagnosed_at: Date.now(),
+                fk_user_id: currentUserId,
                 image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
-                fk_student_id: studentDetail.student_id,
+                fk_student_id: studentDetail[0].student_id,
               })
               .select();
           console.log("diagnosis_uploaded", diagnosis_uploaded);

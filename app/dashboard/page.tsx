@@ -40,29 +40,17 @@ export default function Dashboard() {
   const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
 
   useEffect(() => {
-    const getUserDetails = async () => {
-      try {
-        const res = await axios.get("/api/auth/cookies");
-        if (res.status === 200) {
-          setUser(JSON.parse(res.data.user.value).user);
-        } else {
-          router.push("/login");
-        }
-      } catch (err: any) {
-        router.push("/login");
-        // setError(err.response?.data?.error || "Something went wrong")
-      }
-    };
-    // Get recent analyses
-    const diagnosis = async () => {
+      const diagnosis = async () => {
       const res = await axios.get("/api/dashboard");
       if (res.status === 200) {
         setRecentAnalyses(res.data.diagnosis);
       } else setRecentAnalyses([]);
     };
-    // const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
-    // setRecentAnalyses(history.slice(0, 3));
-    getUserDetails();
+    const getUser = async () => {
+      const user = await axios.get("/api/auth/cookies")
+      setUser(JSON.parse(user.data.user.value).user);
+    }
+    getUser();
     diagnosis();
   }, []);
 
@@ -80,21 +68,22 @@ export default function Dashboard() {
     }
   };
 
-  const uploadImage = () => {
+  const uploadImage = async () => {
     const formData = new FormData();
     if (selectedFile) formData.append("file", selectedFile);
     formData.append("studentName", studentName.trim());
     if (user) formData.append("currentUserId", user.user_id.toString());
-    const fileUploaded = axios.post("/api/dashboard", formData);
+    const fileUploaded = await axios.post("/api/dashboard", formData);
     console.log(fileUploaded);
+    return fileUploaded;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile || !studentName) return;
     setIsUploading(true);
-    const newAnalysis: any = uploadImage();
-    // Simulate upload and processing with progress
+    const newAnalysis: any = await uploadImage();
+    console.log(newAnalysis);
     let progress = 0;
     const interval = setInterval(() => {
       progress += 5;
@@ -126,7 +115,8 @@ export default function Dashboard() {
         // localStorage.setItem("analysisHistory", JSON.stringify(history));
 
         // Navigate to results page
-        router.push(`/results/${newAnalysis.diagnose_id}`);
+        console.log(newAnalysis.data);
+        router.push(`/results/${newAnalysis.data.diagnosis[0].diagnose_id}`);
       }
     }, 500);
   };
