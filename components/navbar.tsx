@@ -103,6 +103,14 @@ export function Navbar() {
                       Community
                     </Button>
                   </Link>
+                  <Link href="/games" passHref>
+                    <Button
+                      variant={pathname === "/games" ? "default" : "ghost"}
+                      className="justify-start w-full"
+                    >
+                      Games
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     className="justify-start w-full"
@@ -164,6 +172,14 @@ export function Navbar() {
                   className="rounded-full"
                 >
                   Community
+                </Button>
+              </Link>
+              <Link href="/games" passHref>
+                <Button
+                  variant={pathname === "/games" ? "default" : "ghost"}
+                  className="rounded-full"
+                >
+                  Games
                 </Button>
               </Link>
               <UserNav />

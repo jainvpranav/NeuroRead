@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { supabase } from "@/lib/supabase";
-
+import { cookies } from "next/headers";
 export async function GET(req: NextRequest) {
   try {
+      const cookieStore = await cookies();
+    const user = cookieStore.get("user");
     const { data: diagnosis, error: diagnosis_error } = await supabase
       .from("diagnosis")
-      .select("*");
+      .select("*")
+       .eq("fk_user_id", JSON.parse(user?.value?? "{}").user.user_id);
     if (diagnosis_error && !diagnosis) {
       return NextResponse.json(
         { error: "No Diagnosis present" },

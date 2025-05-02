@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+// import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import { Navbar } from "@/components/navbar";
 import {
   Card,
@@ -16,9 +16,10 @@ import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import CreatePostDialog from "./createPostDialog";
+import PageLoader from "@/components/ui/page-loader";
 
 export default function Community() {
-  const router = useRouter();
+  // const router = useRouter();
   const [posts, setPosts] = useState([]);
   const [postLike, setPostLike] = useState([false]);
   const getPosts = async () => {
@@ -59,67 +60,69 @@ export default function Community() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
+    <Suspense fallback={<PageLoader />}>
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
 
-      <main className="flex-1 container py-8 border-2 border-indigo-500 overflow-auto ">
-        <div className="flex justify-between items-center">
-          {/* <Button className="ml-auto bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold px-6 py-2 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300 m-1">
+        <main className="flex-1 container py-8 border-2 border-indigo-500 overflow-auto ">
+          <div className="flex justify-between items-center">
+            {/* <Button className="ml-auto bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold px-6 py-2 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300 m-1">
             Create Post
             </Button> */}
-          <div className="p-4">
-            <CreatePostDialog />
+            <div className="p-4">
+              <CreatePostDialog />
+            </div>
           </div>
-        </div>
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
-          {posts.length >= 1 ? (
-            posts.map((post: any, index: number) => {
-              return (
-                <Card
-                  className="mb-4 break-inside-avoid p-2 rounded shadow"
-                  key={index}
-                >
-                  <CardHeader className="m-0 p-0">
-                    <div className="flex flex-row items-center gap-2">
-                      <Avatar className="m-1">
-                        <AvatarImage src={post.profile_pic_link} />
-                        <AvatarFallback>NR</AvatarFallback>
-                      </Avatar>
-                      <span className="text-xs">{post.username}</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div>
-                      <span>{post.description}</span>
-                    </div>
-                    <img
-                      className="rounded-md"
-                      src={post.image_link}
-                      alt="Community Post Image"
-                    />
-                  </CardContent>
-                  <CardFooter className="flex justify-center items-center gap-2">
-                    <Button
-                      className="bg-transparent hover:bg-transparent"
-                      onClick={() => {
-                        handleLike(event, index);
-                      }}
-                    >
-                      {<Heart color={postLike[index] ? "red" : "white"} />}
-                      <span className="text-white">{post.likes}</span>
-                    </Button>
-                    <Button className="bg-transparent hover:bg-transparent">
-                      <Share2 color="white" />
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
-            })
-          ) : (
-            <Skeleton className="w-100 h-100 rounded-xl" />
-          )}
-        </div>
-      </main>
-    </div>
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
+            {posts.length >= 1 ? (
+              posts.map((post: any, index: number) => {
+                return (
+                  <Card
+                    className="mb-4 break-inside-avoid p-2 rounded shadow"
+                    key={index}
+                  >
+                    <CardHeader className="m-0 p-0">
+                      <div className="flex flex-row items-center gap-2">
+                        <Avatar className="m-1">
+                          <AvatarImage src={post.profile_pic_link} />
+                          <AvatarFallback>NR</AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs">{post.username}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div>
+                        <span>{post.description}</span>
+                      </div>
+                      <img
+                        className="rounded-md"
+                        src={post.image_link}
+                        alt="Community Post Image"
+                      />
+                    </CardContent>
+                    <CardFooter className="flex justify-center items-center gap-2">
+                      <Button
+                        className="bg-transparent hover:bg-transparent"
+                        onClick={() => {
+                          handleLike(event, index);
+                        }}
+                      >
+                        {<Heart color={postLike[index] ? "red" : "white"} />}
+                        <span className="text-white">{post.likes}</span>
+                      </Button>
+                      <Button className="bg-transparent hover:bg-transparent">
+                        <Share2 color="white" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })
+            ) : (
+              <Skeleton className="w-100 h-100 rounded-xl" />
+            )}
+          </div>
+        </main>
+      </div>
+    </Suspense>
   );
 }

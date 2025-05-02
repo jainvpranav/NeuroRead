@@ -69,9 +69,9 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9 border-2 border-primary/20">
-            <AvatarImage src="/placeholder.svg" alt={user.name} />
+            <AvatarImage src={user.profile_pic_link} alt={user.name} />
             <AvatarFallback className="bg-gradient-to-br from-neuro-500 to-read-500 text-white">
-              {initials}
+              {user.name[0]}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -98,6 +98,10 @@ export function UserNav() {
           <DropdownMenuItem onClick={() => router.push("/community")}>
             <Globe className="mr-2 h-4 w-4" />
             <span>Community</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/games")}>
+            <Globe className="mr-2 h-4 w-4" />
+            <span>Games</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
