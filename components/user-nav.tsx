@@ -20,6 +20,7 @@ import {
   History,
   LayoutDashboard,
   Globe,
+  Gamepad2,
 } from "lucide-react";
 import axios from "axios";
 
@@ -100,17 +101,17 @@ export function UserNav() {
             <span>Community</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/games")}>
-            <Globe className="mr-2 h-4 w-4" />
+            <Gamepad2 className="mr-2 h-4 w-4" />
             <span>Games</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem

@@ -35,16 +35,15 @@ import PageLoader from "@/components/ui/page-loader";
 
 // Update the Analysis type to reflect the new metrics
 type Analysis = {
-  id: string;
+  diagnose_id: string;
   studentName: string;
-  date: string;
-  imageUrl: string;
+  diagnosed_at: string;
+  image_uploaded_link: string;
+  dyslexia_risk_score: number;
   results: {
-    dyslexiaScore: number;
     motorVariability: number;
     orthographicIrregularity: number;
     writingDynamics: number;
-    id: number;
   };
 };
 
@@ -54,26 +53,19 @@ export default function ResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  // get the results
   const router = useRouter();
-  const [user, setUser] = useState<{
-    user_id: Number;
-    name: string;
-    profile_pic_link: string;
-    email: string;
-    role: string;
-  } | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
+  const getData = async () => {
+    const formData = new FormData();
+    formData.append("diagnosis_id", id);
+    const analysis = await axios.post(`/api/results/`, formData);
+    console.log(analysis.data[0]);
+    setAnalysis(analysis.data[0]);
+  };
+
   useEffect(() => {
-    // // Get analysis from history
-    // const history = JSON.parse(localStorage.getItem("analysisHistory") || "[]");
-    // const foundAnalysis = history.find((item: Analysis) => item.id === id);
-    // if (foundAnalysis) {
-    //   setAnalysis(foundAnalysis);
-    // } else {
-    //   router.push("/dashboard");
-    // }
+    getData();
   }, [id, router]);
 
   if (!analysis) {
@@ -101,7 +93,7 @@ export default function ResultsPage({
     return { level: "High Risk", color: "bg-red-500" };
   };
 
-  const risk = getRiskLevel(analysis.results.dyslexiaScore);
+  const risk = getRiskLevel(analysis.dyslexia_risk_score);
 
   return (
     <Suspense fallback={<PageLoader />}>
@@ -118,14 +110,14 @@ export default function ResultsPage({
             </Link>
             <h1 className="text-3xl font-bold">Analysis Results</h1>
             <div className="ml-auto flex gap-2">
-              <Button variant="outline" size="sm" className="rounded-full">
+              {/* <Button variant="outline" size="sm" className="rounded-full">
                 <Printer className="h-4 w-4 mr-2" />
                 Print
               </Button>
               <Button variant="outline" size="sm" className="rounded-full">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
-              </Button>
+              </Button> */}
             </div>
           </div>
 
@@ -136,14 +128,15 @@ export default function ResultsPage({
                   <div>
                     <CardTitle>Handwriting Sample</CardTitle>
                     <CardDescription>
-                      {analysis.studentName} • {formatDate(analysis.date)}
+                      {analysis.studentName} •{" "}
+                      {formatDate(analysis.diagnosed_at)}
                     </CardDescription>
                   </div>
                   <Badge
                     variant="outline"
                     className="bg-primary/10 text-primary border-primary/20"
                   >
-                    Sample #{analysis.id.substring(0, 4)}
+                    Sample #{analysis.diagnose_id}
                   </Badge>
                 </div>
               </CardHeader>
@@ -151,7 +144,7 @@ export default function ResultsPage({
                 <div className="relative w-full h-64 mb-4 border rounded-lg overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={analysis.imageUrl || "/placeholder.svg"}
+                    src={analysis.image_uploaded_link || "/placeholder.svg"}
                     alt="Handwriting sample"
                     className="w-full h-full object-contain"
                   />
@@ -177,11 +170,11 @@ export default function ResultsPage({
                       Overall Dyslexia Indicator Score
                     </span>
                     <span className="text-sm font-medium">
-                      {analysis.results.dyslexiaScore}%
+                      {analysis.dyslexia_risk_score}%
                     </span>
                   </div>
                   <Progress
-                    value={analysis.results.dyslexiaScore}
+                    value={analysis.dyslexia_risk_score}
                     className={risk.color}
                   />
                   <div className="flex justify-end">
