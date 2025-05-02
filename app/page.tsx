@@ -183,7 +183,7 @@ export default function Home() {
                   <div className="p-4">
                     <div className="rounded-lg overflow-hidden border">
                       <img
-                        src="/placeholder.svg?height=300&width=600"
+                        src="/dyslexia_home_img.jpeg"
                         alt="NeuroRead Dashboard Preview"
                         className="w-full h-auto"
                       />
