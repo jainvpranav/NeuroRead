@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
@@ -21,23 +21,25 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Brain, Loader2, Mail, Lock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
+import PageLoader from "@/components/ui/page-loader";
 
 export default function Login() { 
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
 
 useEffect(() => {
   const checkUser = async () => {
+    setIsLoading(true);
     console.log("checking if the user is present");
     const cookies = await axios.get("api/auth/cookies");
     console.log(cookies);
     if (cookies.data.user) {
         router.push("/dashboard");
-      return
+        return
     }
     setIsLoading(false);
   };
@@ -57,16 +59,20 @@ useEffect(() => {
       });
       if (res.status === 200) {
           router.push("/dashboard");
-    
-      }
+        }
       setIsLoading(false);
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
     }
   };
-  if(!isLoading) {
+  if(isLoading) {
+    return <PageLoader />
+  }
+  else {
+    
     return (
+      <Suspense fallback={<PageLoader />} >
       <div className="flex min-h-screen flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center p-4 md:p-8 pattern-bg">
@@ -168,6 +174,7 @@ useEffect(() => {
           </div>
         </main>
       </div>
+      </Suspense>
     );
   }
 }

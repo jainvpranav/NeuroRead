@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Brain, FileText, BarChart3, History, ArrowRight, CheckCircle2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { Suspense } from "react"
+import PageLoader from "@/components/ui/page-loader"
 
 export default function Home() {
   return (
+    <Suspense fallback={<PageLoader />} >
+
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
@@ -250,6 +254,8 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </Suspense>
+  
   )
 }
 
