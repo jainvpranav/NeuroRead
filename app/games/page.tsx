@@ -19,7 +19,7 @@ export default function GamesPage() {
       category: "Reading",
       level: "Beginner",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/2c9h67mizr6fhkl8",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game1.png",
     },
     {
       title: "Spelling Sprint",
@@ -27,7 +27,7 @@ export default function GamesPage() {
       category: "Spelling",
       level: "Intermediate",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game2.png",
     },
     {
       title: "Word Builder",
@@ -35,24 +35,22 @@ export default function GamesPage() {
       category: "Vocabulary",
       level: "Advanced",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/sxpdew5apwhq747m",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game3.jpg",
     },
   ]
 
   const filteredGames = games.filter(
     (game) =>
       game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.level.toLowerCase().includes(searchQuery.toLowerCase()),
+      game.category.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
       <Suspense fallback={<PageLoader />}>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <Navbar />
-        <main className="flex flex-col items-center gap-8 p-6">
+        <main className="flex flex-col items-center p-6">
           <HeroSection />
-
           <motion.div
             className="w-full max-w-md mx-auto mb-8"
             initial={{ opacity: 0 }}
@@ -63,7 +61,7 @@ export default function GamesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Search games by title, category or level..."
+                placeholder="Search games by title...."
                 className="pl-10 pr-4 py-2 rounded-full border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-200"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

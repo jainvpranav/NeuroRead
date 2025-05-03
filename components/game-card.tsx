@@ -12,7 +12,6 @@ interface GameCardProps {
     title: string
     description: string
     category: string
-    level: string
     link: string
     image: string
   }
@@ -45,9 +44,6 @@ export function GameCard({ game, delay = 0 }: GameCardProps) {
               <Badge variant="secondary" className="bg-purple-100 text-purple-700 hover:bg-purple-200">
                 {game.category}
               </Badge>
-              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm">
-                {game.level}
-              </Badge>
             </div>
             <motion.div
               className="absolute inset-0 flex flex-col justify-end p-6 text-white"
@@ -78,13 +74,13 @@ export function GameCard({ game, delay = 0 }: GameCardProps) {
                     <GameController className="mr-2 h-4 w-4" /> Play Now
                   </a>
                 </Button>
-                <Button
+                {/* <Button
                   variant="outline"
                   size="icon"
                   className="rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30"
                 >
                   <Info className="h-4 w-4" />
-                </Button>
+                </Button> */}
               </motion.div>
             </motion.div>
           </div>

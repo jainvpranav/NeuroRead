@@ -131,13 +131,13 @@ export default function Community() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               size="icon"
               className="bg-gray-800/50 border-gray-700 text-white hover:bg-gray-700"
             >
               <Filter className="h-4 w-4" />
-            </Button>
+            </Button> */}
             <CreatePostDialog />
           </div>
         </motion.div>

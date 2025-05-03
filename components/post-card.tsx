@@ -30,7 +30,7 @@ export function PostCard({ post, index, isLiked, onLike }: PostCardProps) {
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <Card className="overflow-hidden bg-gray-800/60 backdrop-blur-sm border-gray-700 hover:border-purple-500/50 transition-colors duration-300">
+      <Card className="overflow-hidden bg-gray-800/60 backdrop-blur-sm border-gray-700 hover:border-purple-500/50 transition-colors duration-300 my-5">
         <CardHeader className="p-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
