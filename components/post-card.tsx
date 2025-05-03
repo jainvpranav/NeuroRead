@@ -12,10 +12,11 @@ interface PostCardProps {
   post: any
   index: number
   isLiked: boolean
+  tags: string
   onLike: (e: any, index: number) => void
 }
 
-export function PostCard({ post, index, isLiked, onLike }: PostCardProps) {
+export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
@@ -47,7 +48,7 @@ export function PostCard({ post, index, isLiked, onLike }: PostCardProps) {
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="bg-purple-900/30 text-purple-200 border-purple-500/30 text-xs">
-                {post.category || "Post"}
+                {post.tags || "Post"}
               </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -97,18 +98,9 @@ export function PostCard({ post, index, isLiked, onLike }: PostCardProps) {
                 {post.likes || 0}
               </span>
             </motion.button>
-
-            <motion.button whileTap={{ scale: 1.2 }} className="flex items-center gap-1 text-sm group">
-              <MessageCircle className="h-5 w-5 text-gray-400 group-hover:text-blue-400" />
-              <span className="text-gray-400 group-hover:text-blue-400">{post.comments || 0}</span>
-            </motion.button>
           </div>
 
           <div className="flex items-center gap-2">
-            <motion.button whileTap={{ scale: 1.2 }} className="text-gray-400 hover:text-purple-400">
-              <Bookmark className="h-5 w-5" />
-            </motion.button>
-
             <motion.button
               whileTap={{ scale: 1.2 }}
               className="text-gray-400 hover:text-purple-400"

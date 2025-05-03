@@ -78,11 +78,11 @@ export function CommunityHeader() {
         >
           <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
             <Sparkles className="h-4 w-4 text-yellow-300" />
-            <span className="text-sm font-medium">1.2k Active Members</span>
+            <span className="text-sm font-medium">500+ Active Members</span>
           </div>
           <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
             <TrendingUp className="h-4 w-4 text-green-300" />
-            <span className="text-sm font-medium">250+ Posts Today</span>
+            <span className="text-sm font-medium">40+ Posts Today</span>
           </div>
         </motion.div>
       </div>

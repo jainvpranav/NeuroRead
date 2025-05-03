@@ -264,7 +264,7 @@ export default function HistoryPage() {
                       <TableRow>
                         <TableHead>Student Name</TableHead>
                         <TableHead>Date</TableHead>
-                        <TableHead>Dyslexia Score</TableHead>
+                        <TableHead>Dyslexia Pattern Indicator</TableHead>
                         <TableHead>Risk Level</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>

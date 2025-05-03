@@ -87,7 +87,7 @@ export default function Community() {
   }
 
   const filteredPosts = posts?.filter((post: any) => {
-    if (activeTab !== "all" && post.category !== activeTab) return false
+    if (activeTab !== "all" && post.tags !== activeTab) return false
     if (
       searchQuery &&
       !post.description?.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -113,9 +113,9 @@ export default function Community() {
             <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
               <TabsList className="bg-gray-800/50 backdrop-blur-sm">
                 <TabsTrigger value="all">All Posts</TabsTrigger>
-                <TabsTrigger value="success">Success Stories</TabsTrigger>
-                <TabsTrigger value="question">Questions</TabsTrigger>
-                <TabsTrigger value="resource">Resources</TabsTrigger>
+                <TabsTrigger value="success_stories">Success Stories</TabsTrigger>
+                <TabsTrigger value="questions|resources">Questions</TabsTrigger>
+                <TabsTrigger value="resources|questions">Resources</TabsTrigger>
               </TabsList>
             </Tabs>
             
@@ -184,15 +184,17 @@ export default function Community() {
                   className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-0"
                 >
                   <AnimatePresence>
-                    {filteredPosts.map((post: any, index: number) => (
+                    {filteredPosts.map((post: any, index: number) => {
+                      return (
                       <PostCard
                         key={post.post_id || index}
                         post={post}
                         index={index}
                         isLiked={postLike[index]}
+                        tags={post.tags}
                         onLike={handleLike}
                       />
-                    ))}
+                    )})}
                   </AnimatePresence>
                 </motion.div>
               ) : (

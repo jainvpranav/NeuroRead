@@ -8,6 +8,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
@@ -22,7 +30,7 @@ export default function CreatePostDialog() {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [tags, setTags] = useState("");
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       setImageFile(acceptedFiles[0]);
@@ -55,6 +63,7 @@ export default function CreatePostDialog() {
     if (!description && !imageFile) return;
     const formData = new FormData();
     formData.append("type", "post");
+    formData.append("tags", tags);
     formData.append("description", description);
     formData.append("userDetails", JSON.stringify(user));
     if (imageFile) formData.append("file", imageFile);
@@ -64,6 +73,7 @@ export default function CreatePostDialog() {
       },
     });
     setDescription("");
+    setTags("");
     setImageFile(null);
     setOpen(false);
     router.refresh();
@@ -84,6 +94,16 @@ export default function CreatePostDialog() {
         <DialogHeader>
           <DialogTitle>Create a new post</DialogTitle>
         </DialogHeader>
+        <Select value={tags} onValueChange={setTags}>
+          <SelectTrigger className="mt-4">
+            <SelectValue placeholder="Select a tag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="success_stories">Success Stories</SelectItem>
+            <SelectItem value="questions|resources">Questions</SelectItem>
+            <SelectItem value="resources|questions">Resources</SelectItem>
+          </SelectContent>
+        </Select>
 
         <Textarea
           placeholder="Write something..."

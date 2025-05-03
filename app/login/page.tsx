@@ -56,6 +56,7 @@ export default function Login() {
         password,
       });
       if (res.status === 200) {
+        router.refresh();
         router.push("/dashboard");
       } else if (res.status === 401) {
         router.push("/login");
@@ -63,7 +64,6 @@ export default function Login() {
       setIsLoading(false);
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
-    } finally {
     }
   };
   if (isLoading) {
