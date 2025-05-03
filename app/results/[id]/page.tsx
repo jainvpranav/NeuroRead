@@ -13,14 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  Download,
-  ArrowLeft,
-  Share2,
-  Printer,
-  Info,
-  HelpCircle,
-} from "lucide-react";
+import { Download, ArrowLeft, Info, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,10 +23,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { motion,AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import PageLoader from "@/components/ui/page-loader";
-import { GameCard } from "@/components/game-card";
 
 // Update the Analysis type to reflect the new metrics
 type Analysis = {
@@ -42,7 +34,7 @@ type Analysis = {
   diagnosed_at: string;
   image_uploaded_link: string;
   dyslexia_risk_score: number;
-  results: {
+  key_metrics: {
     motorVariability: number;
     orthographicIrregularity: number;
     writingDynamics: number;
@@ -93,7 +85,10 @@ export default function ResultsPage({
     },
   ];
 
-  const [selectedGame, setSelectedGame] = useState<{title: string, link: string}>();
+  const [selectedGame, setSelectedGame] = useState<{
+    title: string;
+    link: string;
+  }>();
 
   useEffect(() => {
     getData();
@@ -231,7 +226,7 @@ export default function ResultsPage({
                         <span className="text-sm">Motor Variability</span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.results.motorVariability.toFixed(1)}/5
+                            {analysis.key_metrics.motorVariability.toFixed(1)}/5
                           </span>
                           <TooltipProvider>
                             <Tooltip>
@@ -250,7 +245,7 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={analysis.results.motorVariability * 20}
+                        value={analysis.key_metrics.motorVariability * 20}
                         className="h-2"
                       />
                     </div>
@@ -262,7 +257,7 @@ export default function ResultsPage({
                         </span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.results.orthographicIrregularity.toFixed(
+                            {analysis.key_metrics.orthographicIrregularity.toFixed(
                               1
                             )}
                             /5
@@ -284,7 +279,9 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={analysis.results.orthographicIrregularity * 20}
+                        value={
+                          analysis.key_metrics.orthographicIrregularity * 20
+                        }
                         className="h-2"
                       />
                     </div>
@@ -294,7 +291,7 @@ export default function ResultsPage({
                         <span className="text-sm">Writing Dynamics</span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.results.writingDynamics.toFixed(1)}/5
+                            {analysis.key_metrics.writingDynamics.toFixed(1)}/5
                           </span>
                           <TooltipProvider>
                             <Tooltip>
@@ -313,7 +310,7 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={analysis.results.writingDynamics * 20}
+                        value={analysis.key_metrics.writingDynamics * 20}
                         className="h-2"
                       />
                     </div>
@@ -411,68 +408,73 @@ export default function ResultsPage({
             </Card>
           </div>
           <div className="flex flex-col items-center gap-8 p-6">
-  <h2 className="text-3xl font-bold text-gray-800">Recommended Games</h2>
+            <h2 className="text-3xl font-bold text-gray-800">
+              Recommended Games
+            </h2>
 
-  <motion.div
-    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 0.4 }}
-  >
-    {games.map((game, idx) => (
-      <div key={idx} className="relative group rounded-2xl overflow-hidden shadow-md bg-white">
-        <img
-          src={game.image}
-          alt={game.title}
-          className="w-full h-[220px] object-cover"
-        />
-        <div className="absolute bottom-4 left-4 text-white text-xl font-semibold drop-shadow">
-          {game.title}
-        </div>
-        <button
-          onClick={() => setSelectedGame(game)} // <-- pass selected game to modal
-          className="absolute top-4 right-4 bg-white/80 text-gray-800 text-sm px-3 py-1 rounded-md shadow-sm hover:bg-white transition"
-        >
-          Play Fullscreen
-        </button>
-      </div>
-    ))}
-  </motion.div>
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              {games.map((game, idx) => (
+                <div
+                  key={idx}
+                  className="relative group rounded-2xl overflow-hidden shadow-md bg-white"
+                >
+                  <img
+                    src={game.image}
+                    alt={game.title}
+                    className="w-full h-[220px] object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 text-white text-xl font-semibold drop-shadow">
+                    {game.title}
+                  </div>
+                  <button
+                    onClick={() => setSelectedGame(game)} // <-- pass selected game to modal
+                    className="absolute top-4 right-4 bg-white/80 text-gray-800 text-sm px-3 py-1 rounded-md shadow-sm hover:bg-white transition"
+                  >
+                    Play Fullscreen
+                  </button>
+                </div>
+              ))}
+            </motion.div>
 
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.5 }}
-    className="mt-12 text-center"
-  ></motion.div>
-  <AnimatePresence>
-  {selectedGame && (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className="relative w-full max-w-6xl h-[80vh] bg-white rounded-lg overflow-hidden shadow-xl">
-        <iframe
-          src={"https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj"}
-          title={selectedGame.title}
-          className="w-full h-full"
-          allowFullScreen
-        />
-        <button
-          onClick={() => setSelectedGame(undefined)}
-          className="absolute top-3 right-3 bg-white text-gray-800 px-4 py-1 text-sm rounded-md shadow hover:bg-gray-100 transition"
-        >
-          Close
-        </button>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
-
-</div>
-
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 text-center"
+            ></motion.div>
+            <AnimatePresence>
+              {selectedGame && (
+                <motion.div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="relative w-full max-w-6xl h-[80vh] bg-white rounded-lg overflow-hidden shadow-xl">
+                    <iframe
+                      src={
+                        "https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj"
+                      }
+                      title={selectedGame.title}
+                      className="w-full h-full"
+                      allowFullScreen
+                    />
+                    <button
+                      onClick={() => setSelectedGame(undefined)}
+                      className="absolute top-3 right-3 bg-white text-gray-800 px-4 py-1 text-sm rounded-md shadow hover:bg-gray-100 transition"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </main>
       </div>
     </Suspense>

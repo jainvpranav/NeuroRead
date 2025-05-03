@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const { data: diagnosis, error: diagnosis_error } = await supabase
       .from("diagnosis")
       .select("*")
-      .eq("fk_user_id", JSON.parse(user?.value?? "{}").user.user_id);
+      .eq("fk_user_id", JSON.parse(user?.value ?? "{}").user.user_id);
     if (diagnosis_error && !diagnosis) {
       return NextResponse.json(
         { error: "No Diagnosis present" },
@@ -91,7 +91,30 @@ export async function POST(req: NextRequest) {
           { status: 500 }
         );
       } else {
-        if (studentDetail? studentDetail.length === 0 : 0) {
+        const prediction_image_url = {
+          image_url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
+        };
+        const modelPrediction = await fetch(
+          "http://139.5.190.111:8000/predict",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // Add Authorization header if needed
+              // 'Authorization': `Bearer ${process.env.API_KEY}`
+            },
+            body: JSON.stringify(prediction_image_url),
+          }
+        );
+        if (!modelPrediction.ok) {
+          return NextResponse.json(
+            { error: `External API error: ${modelPrediction.status}` },
+            { status: 500 }
+          );
+        }
+        const modelPredictionResult = await modelPrediction.json();
+        console.log(modelPredictionResult);
+        if (studentDetail ? studentDetail.length === 0 : 0) {
           const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
             await supabase
               .from("diagnosis")
@@ -99,6 +122,13 @@ export async function POST(req: NextRequest) {
                 fk_user_id: currentUserId,
                 image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
                 fk_student_id: uploadedStudentDetails[0].student_id,
+                dyslexia_risk_score: 0,
+                key_metrics: {
+                  writingDynamics:
+                    modelPredictionResult.adjusted_dyslexia_score,
+                  motorVariability: 0,
+                  orthographicIrregularity: 0,
+                },
               })
               .select();
           console.log("diagnosis_uploaded", diagnosis_uploaded);
@@ -120,6 +150,13 @@ export async function POST(req: NextRequest) {
                 fk_user_id: currentUserId,
                 image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
                 fk_student_id: studentDetail[0].student_id,
+                dyslexia_risk_score: 0,
+                key_metrics: {
+                  writingDynamics:
+                    modelPredictionResult.adjusted_dyslexia_score,
+                  motorVariability: 0,
+                  orthographicIrregularity: 0,
+                },
               })
               .select();
           console.log("diagnosis_uploaded", diagnosis_uploaded);
@@ -141,34 +178,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-
-//E2E
-
-// Example using AWS SDK for JavaScript
-// const s3Client = new S3Client({
-//   region: "your-region",
-//   credentials: {
-//     accessKeyId: "R2XF4YX5C9YAQGKZQLU4",
-//     secretAccessKey: "GMCYHTQLWZT3HIJP5FIUO1E9CYWMW7UGUI16NYLA",
-//   },
-// });
-
-// const uploadImage = async (file: any) => {
-//   const uploadParams = {
-//     Bucket: "handwriting-images",
-//     Key: Date.now().toString(),
-//     Body: file,
-//     ContentType: file.type,
-//   };
-
-//   try {
-//     const command = new PutObjectCommand(uploadParams);
-//     const result = await s3Client.send(command);
-//     console.log("Image uploaded successfully:", result);
-//     return NextResponse.json({ status: 200 });
-//   } catch (error) {
-//     console.error("Error uploading image:", error);
-//     return NextResponse.json({ error: "Server error" }, { status: 500 });
-//   }
-// };
-// uploadImage(file);
