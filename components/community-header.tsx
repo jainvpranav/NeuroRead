@@ -26,10 +26,7 @@ export function CommunityHeader() {
             key={i}
             className="absolute rounded-full bg-white/10 backdrop-blur-sm"
             style={{
-              width: bubble.width,
-              height: bubble.height,
-              left: bubble.left,
-              top: bubble.top,
+              
             }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{
