@@ -30,8 +30,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { motion,AnimatePresence } from "framer-motion";
 import axios from "axios";
 import PageLoader from "@/components/ui/page-loader";
+import { GameCard } from "@/components/game-card";
 
 // Update the Analysis type to reflect the new metrics
 type Analysis = {
@@ -63,6 +65,35 @@ export default function ResultsPage({
     console.log(analysis.data[0]);
     setAnalysis(analysis.data[0]);
   };
+
+  const games = [
+    {
+      title: "Phonics Match",
+      description: "Match sounds with letters in this fun phonics game",
+      category: "Reading",
+      level: "Beginner",
+      link: "https://app.lexercise.com/mylexercise/index/index/demo/2c9h67mizr6fhkl8",
+      image: "/dyslexia_home_img.jpeg",
+    },
+    {
+      title: "Spelling Sprint",
+      description: "Race against time to spell words correctly",
+      category: "Spelling",
+      level: "Intermediate",
+      link: "https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj",
+      image: "/dyslexia_home_img.jpeg",
+    },
+    {
+      title: "Word Builder",
+      description: "Build words from letters to improve vocabulary",
+      category: "Vocabulary",
+      level: "Advanced",
+      link: "https://app.lexercise.com/mylexercise/index/index/demo/sxpdew5apwhq747m",
+      image: "/dyslexia_home_img.jpeg",
+    },
+  ];
+
+  const [selectedGame, setSelectedGame] = useState<{title: string, link: string}>();
 
   useEffect(() => {
     getData();
@@ -379,6 +410,69 @@ export default function ResultsPage({
               </CardFooter>
             </Card>
           </div>
+          <div className="flex flex-col items-center gap-8 p-6">
+  <h2 className="text-3xl font-bold text-gray-800">Recommended Games</h2>
+
+  <motion.div
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 0.4 }}
+  >
+    {games.map((game, idx) => (
+      <div key={idx} className="relative group rounded-2xl overflow-hidden shadow-md bg-white">
+        <img
+          src={game.image}
+          alt={game.title}
+          className="w-full h-[220px] object-cover"
+        />
+        <div className="absolute bottom-4 left-4 text-white text-xl font-semibold drop-shadow">
+          {game.title}
+        </div>
+        <button
+          onClick={() => setSelectedGame(game)} // <-- pass selected game to modal
+          className="absolute top-4 right-4 bg-white/80 text-gray-800 text-sm px-3 py-1 rounded-md shadow-sm hover:bg-white transition"
+        >
+          Play Fullscreen
+        </button>
+      </div>
+    ))}
+  </motion.div>
+
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.5 }}
+    className="mt-12 text-center"
+  ></motion.div>
+  <AnimatePresence>
+  {selectedGame && (
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="relative w-full max-w-6xl h-[80vh] bg-white rounded-lg overflow-hidden shadow-xl">
+        <iframe
+          src={"https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj"}
+          title={selectedGame.title}
+          className="w-full h-full"
+          allowFullScreen
+        />
+        <button
+          onClick={() => setSelectedGame(undefined)}
+          className="absolute top-3 right-3 bg-white text-gray-800 px-4 py-1 text-sm rounded-md shadow hover:bg-gray-100 transition"
+        >
+          Close
+        </button>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+</div>
+
         </main>
       </div>
     </Suspense>
