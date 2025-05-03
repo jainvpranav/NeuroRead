@@ -118,6 +118,7 @@ export default function Community() {
                 <TabsTrigger value="resource">Resources</TabsTrigger>
               </TabsList>
             </Tabs>
+            
           </div>
 
           <div className="flex items-center gap-4 w-full md:w-auto">
