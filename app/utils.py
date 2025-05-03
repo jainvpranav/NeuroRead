@@ -27,7 +27,7 @@ def save_uploaded_file(file):
     return temp_file.name
 
 
-def interpret_result(prediction):
+def interpret_result(letter_path,prediction):
     """
     Interpret the model prediction.
     
@@ -60,6 +60,7 @@ def interpret_result(prediction):
     
     return {
         "dyslexia_score": dyslexia_score,
+        "letter_path":letter_path,
         "risk_level": risk_level,
         "predicted_class": class_interpretation,
         "interpretation": interpretation

@@ -89,6 +89,6 @@ def analyze_handwriting(model, image_tensor, device="cpu"):
     
     return {
         'reversal_probability': reversal_probability,
-        'dyslexia_indicator_percentage': reversal_probability * 100,
+        'dyslexia_indicator_percentage': reversal_probability,
         'predicted_class': prediction['predicted_class']
     }
