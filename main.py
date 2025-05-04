@@ -50,15 +50,8 @@ async def predict(request: PredictRequest):
             print("STDOUT:", e.stdout)
             print("STDERR:", e.stderr)
             raise HTTPException(status_code=500, detail=f"Model prediction failed. Details: {e.stderr}")
-
-        # Step 5: Read and return result
-        # Step 5: Read and return result
-        if os.path.exists(output_path):
-            with open(output_path, "r") as f:
-                result = json.load(f)
-        else:
-            print(f"File not found: {output_path}")
-        return result
+        
+        return result.stdout[:-1]
 
     except requests.exceptions.RequestException:
         raise HTTPException(status_code=400, detail="Failed to download image from the provided URL.")

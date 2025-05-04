@@ -122,7 +122,7 @@ def main():
         translate_text =None
         if args.language != "english":
             details_in_english = llama_result['detailed_text']
-            # print("_--------------------------------\n",details_in_english,"\n________--")
+            # print("--------------------------------\n",details_in_english,"\n___--")
             translate_text = translate(details_in_english,args.language)
       
         # print(translate_text)
@@ -134,9 +134,9 @@ def main():
         overall_score = find_overall_risk(mirror_writing,orthographic_irregularity,motor_variability)
         final_json = response_structure(overall_score,final_results,llama_result,translate_text)
         # print("final json",final_json)
-        
-        print(final_json)
-        return final_json
+        final_json_json=json.dumps(final_json)
+        print(final_json_json)
+        return final_json_json
         
     except Exception as e:
         print(f"Error: {str(e)}")
