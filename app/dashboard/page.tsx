@@ -106,10 +106,12 @@ export default function Dashboard() {
         console.log(newAnalysis.data);
         const user_mobile = user?.mobile.toString(); // recipient's number, like +919876543210
 
-        const message = `Hi ${studentName}, your handwriting analysis is complete.
+        const message = `Hi ${
+          user?.name
+        }, the report of ${studentName} is ready.
 
 🧠 Diagnosis ID: ${newAnalysis.data.diagnosis[0].diagnose_id}
-📊 Dyslexia Score: ${newAnalysis.data.diagnosis[0].dyslexia_score}
+📊 Dyslexia Pattern value: ${newAnalysis.data.diagnosis[0].dyslexia_risk_score}
 📅 Date: ${new Date().toLocaleDateString()}
 
 View full results: https://neuro-read.vercel.app/results/${

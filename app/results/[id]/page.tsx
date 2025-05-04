@@ -26,14 +26,18 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import PageLoader from "@/components/ui/page-loader";
-
-// Update the Analysis type to reflect the new metrics
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
 type Analysis = {
   diagnose_id: string;
   studentName: string;
   diagnosed_at: string;
   image_uploaded_link: string;
   dyslexia_risk_score: number;
+  summary: {
+    summary_english: string;
+    summary_translated: string;
+  };
   key_metrics: {
     motorVariability: number;
     orthographicIrregularity: number;
@@ -49,6 +53,7 @@ export default function ResultsPage({
   const { id } = use(params);
   const router = useRouter();
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [showEnglish, setShowEnglish] = useState(false);
 
   const getData = async () => {
     const formData = new FormData();
@@ -65,7 +70,7 @@ export default function ResultsPage({
       category: "Reading",
       level: "Beginner",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/2c9h67mizr6fhkl8",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game3.jpg",
     },
     {
       title: "Spelling Sprint",
@@ -73,7 +78,7 @@ export default function ResultsPage({
       category: "Spelling",
       level: "Intermediate",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/ll4m2gkogxhzc0zj",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game2.png",
     },
     {
       title: "Word Builder",
@@ -81,7 +86,7 @@ export default function ResultsPage({
       category: "Vocabulary",
       level: "Advanced",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/sxpdew5apwhq747m",
-      image: "/dyslexia_home_img.jpeg",
+      image: "/game1.png",
     },
   ];
 
@@ -121,6 +126,55 @@ export default function ResultsPage({
 
   const risk = getRiskLevel(analysis.dyslexia_risk_score);
 
+  const handleDownload = () => {
+    const doc = new jsPDF();
+
+  // Title
+  doc.setFontSize(18);
+  doc.text("Dyslexia Pattern Recognition", 14, 20);
+
+  // Basic Info
+  doc.setFontSize(12);
+  doc.text(`Result ID: ${analysis.diagnose_id}`, 14, 30);
+  doc.text(`Student Name: ${analysis.studentName}`, 14, 36);
+  doc.text(`Generated At: ${new Date(analysis.diagnosed_at).toLocaleString()}`, 14, 42);
+
+  // Table for key metrics
+  autoTable(doc, {
+    startY: 50,
+    head: [["Dyslexia Risk Score", "Motor Variability", "Orthographic Irregularity", "Mirror Writing"]],
+    body: [[
+      analysis.dyslexia_risk_score.toFixed(2),
+      analysis.key_metrics.motorVariability,
+      analysis.key_metrics.orthographicIrregularity,
+      analysis.key_metrics.mirrorWriting.toFixed(2)
+    ]],
+    theme: "striped",
+    styles: { fontSize: 11 },
+    headStyles: { fillColor: [22, 160, 133] },
+  });
+
+  // Summary English
+  let finalY = 100;
+  doc.setFontSize(11);
+  doc.text(doc.splitTextToSize(analysis.summary.summary_english, 180), 14, finalY + 6);
+
+  // Summary Translated
+  finalY = finalY + 6 + doc.getTextDimensions(analysis.summary.summary_english).h;
+  doc.setFontSize(11);
+
+  // Optional: Image link (not embedded, just link)
+  finalY = finalY + 6 + doc.getTextDimensions(analysis.summary.summary_translated).h;
+  doc.setFontSize(12);
+  doc.text("Uploaded Image:", 14, finalY + 40);
+  doc.setTextColor(0, 0, 255);
+  doc.textWithLink("View Image", 50, finalY + 40, { url: analysis.image_uploaded_link });
+  doc.setTextColor(0, 0, 0); // reset to black
+
+  // Save
+  doc.save(`report-${analysis.diagnose_id}.pdf`);
+  };
+
   return (
     <Suspense fallback={<PageLoader />}>
       <div className="flex min-h-screen flex-col">
@@ -136,14 +190,6 @@ export default function ResultsPage({
             </Link>
             <h1 className="text-3xl font-bold">Analysis Results</h1>
             <div className="ml-auto flex gap-2">
-              {/* <Button variant="outline" size="sm" className="rounded-full">
-                <Printer className="h-4 w-4 mr-2" />
-                Print
-              </Button>
-              <Button variant="outline" size="sm" className="rounded-full">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button> */}
             </div>
           </div>
 
@@ -175,9 +221,13 @@ export default function ResultsPage({
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <Button variant="outline" className="w-full rounded-full">
+                <Button
+                  variant="outline"
+                  className="w-full rounded-full"
+                  onClick={handleDownload}
+                >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Sample
+                  Download Report
                 </Button>
               </CardContent>
             </Card>
@@ -399,20 +449,33 @@ export default function ResultsPage({
                   </TabsContent>
                 </Tabs>
               </CardContent>
-              <CardFooter className="bg-muted/30 px-6 py-4">
-                <div className="w-full text-center text-sm text-muted-foreground">
-                  <p>
-                    This analysis is for educational purposes only and is not a
-                    medical diagnosis.
-                  </p>
-                  <p>
-                    Always consult with qualified professionals for formal
-                    assessment.
-                  </p>
-                </div>
-              </CardFooter>
             </Card>
+            <div>
+            </div>
           </div>
+              <Card>
+  <CardFooter className="pt-4">
+    <div className="w-full space-y-2">
+      <h4 className="font-medium text-m text-primary">Report</h4>
+
+      <p className="text-sm text-muted-foreground">
+        {showEnglish
+          ? analysis.summary.summary_english
+          : analysis.summary.summary_translated}
+      </p>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-xs p-0 h-auto"
+        onClick={() => setShowEnglish(!showEnglish)}
+      >
+        {showEnglish ? "Show in Regional Language" : "Show in English"}
+      </Button>
+    </div>
+  </CardFooter>
+</Card>
+
           <div className="flex flex-col items-center gap-8 p-6">
             <h2 className="text-3xl font-bold text-gray-800">
               Recommended Games

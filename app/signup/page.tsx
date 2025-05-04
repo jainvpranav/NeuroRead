@@ -37,13 +37,28 @@ export default function Signup() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+  
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      setIsLoading(false);
+      return;
+    }
+  
+    if (!phoneRegex.test(mobile)) {
+      setError("Please enter a valid 10-digit mobile number");
+      setIsLoading(false);
+      return;
+    }
+  
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
-
+  
     try {
       const response = await axios.post("/api/auth/signup", {
         name,
@@ -52,8 +67,7 @@ export default function Signup() {
         role,
         mobile,
       });
-
-
+  
       router.push("/login");
     } catch (err: any) {
       if (err.response?.data?.error) {
@@ -65,6 +79,7 @@ export default function Signup() {
       setIsLoading(false);
     }
   };
+  
   if (isLoading) {
     return <PageLoader />;
   } else {
@@ -74,12 +89,6 @@ export default function Signup() {
         <main className="flex-1 flex items-center justify-center p-4 md:p-8 pattern-bg">
           <div className="w-full max-w-md">
             <Tabs defaultValue="signup" className="w-full">
-              {/* <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="login" onClick={() => router.push("/login")}>
-                Login
-              </TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList> */}
               <TabsContent value="signup">
                 <Card className="border-none shadow-lg">
                   <CardHeader className="space-y-1 flex flex-col items-center">
@@ -115,7 +124,7 @@ export default function Signup() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="mobile">Mobile</Label>
                         <div className="relative">
                           <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input

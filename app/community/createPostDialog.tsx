@@ -9,12 +9,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Command, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const options = [
+  { label: "Success Stories", value: "success_stories" },
+  { label: "Questions", value: "questions" },
+  { label: "Resources", value: "resources" },
+];
 
 import { Button } from "@/components/ui/button";
 import { useDropzone } from "react-dropzone";
@@ -28,15 +42,21 @@ export default function CreatePostDialog() {
   const router = useRouter();
   const [user, setUser] = useState("");
   const [open, setOpen] = useState(false);
+  const [popOverOpen, setPopOverOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [tags, setTags] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [language, setLanguage] = useState("");
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       setImageFile(acceptedFiles[0]);
     }
   };
-
+  const toggleItem = (value: string) => {
+    setSelected((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
   useEffect(() => {
     const getUserDetails = async () => {
       try {
@@ -63,19 +83,24 @@ export default function CreatePostDialog() {
     if (!description && !imageFile) return;
     const formData = new FormData();
     formData.append("type", "post");
-    formData.append("tags", tags);
+    const selected_text = selected.join("|");
+    console.log("selected: ", selected_text);
+    formData.append("tags", selected_text);
+    formData.append("language", language);
     formData.append("description", description);
     formData.append("userDetails", JSON.stringify(user));
     if (imageFile) formData.append("file", imageFile);
+    console.log(formData);
     const savePost = axios.post("/api/posts", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
     setDescription("");
-    setTags("");
+    setSelected([]);
     setImageFile(null);
-    setOpen(false);
+    setLanguage("");
+    setPopOverOpen(false);
     router.refresh();
   };
 
@@ -94,17 +119,55 @@ export default function CreatePostDialog() {
         <DialogHeader>
           <DialogTitle>Create a new post</DialogTitle>
         </DialogHeader>
-        <Select value={tags} onValueChange={setTags}>
-          <SelectTrigger className="mt-4">
-            <SelectValue placeholder="Select a tag" />
+        <Popover open={popOverOpen} onOpenChange={setPopOverOpen}>
+          <PopoverTrigger asChild>
+            <button className="w-full mt-4 inline-flex items-center justify-between rounded-md border px-4 py-2 text-sm">
+              {selected.length > 0 ? selected.join(", ") : "Select tags"}
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-0">
+            <Command>
+              <CommandList>
+                {options.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    onSelect={() => toggleItem(option.value)}
+                    className="cursor-pointer"
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        selected.includes(option.value)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        <Select value={language} onValueChange={(value) => setLanguage(value)}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select language" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="success_stories">Success Stories</SelectItem>
-            <SelectItem value="questions|resources">Questions</SelectItem>
-            <SelectItem value="resources|questions">Resources</SelectItem>
+            <SelectItem value="English">English</SelectItem>
+            <SelectItem value="Hindi">Hindi</SelectItem>
+            <SelectItem value="Kannada">Kannada</SelectItem>
+            <SelectItem value="Gujrati">Gujrati</SelectItem>
+            <SelectItem value="Punjabi">Punjabi</SelectItem>
+            <SelectItem value="Tamil">Tamil</SelectItem>
+            <SelectItem value="Marathi">Marathi</SelectItem>
+            <SelectItem value="Telugu">Telugu</SelectItem>
+            <SelectItem value="Odia">Odia</SelectItem>
+            <SelectItem value="Malayalam">Malayalam</SelectItem>
+            <SelectItem value="Bengali">Bengali</SelectItem>
           </SelectContent>
         </Select>
-
         <Textarea
           placeholder="Write something..."
           value={description}

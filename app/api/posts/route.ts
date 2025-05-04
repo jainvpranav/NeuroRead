@@ -51,6 +51,9 @@ export async function POST(req: NextRequest) {
       const description = formData.get("description") as string;
       const userDetails = JSON.parse(formData.get("userDetails") as string);
       const file = formData.get("file") as File | null;
+      const tags = formData.get("tags") as string;
+      const language = formData.get("language") as string;
+      console.log("tags: ", tags)
       if (!description || !userDetails) {
         return NextResponse.json({ error: "Missing fields" }, { status: 400 });
       }
@@ -71,16 +74,21 @@ export async function POST(req: NextRequest) {
             { status: 500 }
           );
         }
+        const { data: posts, error } = await supabase.from("posts").select("*");
+
         const { data: post_uploaded, error: post_not_uploaded } = await supabase
           .from("posts")
-          .insert([
+          .insert(
             {
+              post_id: posts? posts?.length + 1: 1000,
               description: description,
               fk_user_id: userDetails.user_id,
               likes: 0,
+              tags: tags,
+              language: language,
               image_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/posts//${uploadedImage.path}`,
             },
-          ]);
+          );
         if (post_not_uploaded) {
           return NextResponse.json(
             { error: post_not_uploaded },
