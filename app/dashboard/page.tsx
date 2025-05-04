@@ -39,6 +39,7 @@ export default function Dashboard() {
     profile_pic_link: string;
     email: string;
     role: string;
+    mobile: string;
   } | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -95,7 +96,7 @@ export default function Dashboard() {
     const newAnalysis: any = await uploadImage();
     console.log(newAnalysis);
     let progress = 0;
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       progress += 5;
       setUploadProgress(progress);
 
@@ -103,6 +104,23 @@ export default function Dashboard() {
         clearInterval(interval);
         // Navigate to results page
         console.log(newAnalysis.data);
+        const user_mobile = user?.mobile.toString(); // recipient's number, like +919876543210
+
+        const message = `Hi ${studentName}, your handwriting analysis is complete.
+
+🧠 Diagnosis ID: ${newAnalysis.data.diagnosis[0].diagnose_id}
+📊 Dyslexia Score: ${newAnalysis.data.diagnosis[0].dyslexia_score}
+📅 Date: ${new Date().toLocaleDateString()}
+
+View full results: https://neuro-read.vercel.app/results/${
+          newAnalysis.data.diagnosis[0].diagnose_id
+        }`;
+
+        await axios.post("/api/whatsapp", {
+          to: user_mobile,
+          message,
+        });
+
         router.push(`/results/${newAnalysis.data.diagnosis[0].diagnose_id}`);
       }
     }, 500);
