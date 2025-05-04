@@ -4,7 +4,7 @@
 
 # # API_URL = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-hi"  # English to Hindi
 # API_URL = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-te" #en to te
-# headers = {"Authorization": "Bearer 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"}
+
 
 # data = {
 #     "inputs": "Your English sentence here"  # Replace with your English sentence
