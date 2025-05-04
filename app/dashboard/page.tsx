@@ -85,7 +85,7 @@ export default function Dashboard() {
     if (user) formData.append("currentUserId", user.user_id.toString());
     formData.append("language", language);
     const fileUploaded = await axios.post("/api/dashboard", formData);
-    console.log(fileUploaded);
+    //console.log(fileUploaded);
     return fileUploaded;
   };
 
@@ -94,7 +94,7 @@ export default function Dashboard() {
     if (!selectedFile || !studentName) return;
     setIsUploading(true);
     const newAnalysis: any = await uploadImage();
-    console.log(newAnalysis);
+    //console.log(newAnalysis);
     let progress = 0;
     const interval = setInterval(async () => {
       progress += 5;
@@ -103,7 +103,7 @@ export default function Dashboard() {
       if (progress >= 100) {
         clearInterval(interval);
         // Navigate to results page
-        console.log(newAnalysis.data);
+        //console.log(newAnalysis.data);
         const user_mobile = user?.mobile.toString(); // recipient's number, like +919876543210
 
         const message = `Hi ${

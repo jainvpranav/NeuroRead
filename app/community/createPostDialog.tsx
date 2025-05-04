@@ -84,13 +84,13 @@ export default function CreatePostDialog() {
     const formData = new FormData();
     formData.append("type", "post");
     const selected_text = selected.join("|");
-    console.log("selected: ", selected_text);
+    //console.log("selected: ", selected_text);
     formData.append("tags", selected_text);
     formData.append("language", language);
     formData.append("description", description);
     formData.append("userDetails", JSON.stringify(user));
     if (imageFile) formData.append("file", imageFile);
-    console.log(formData);
+    //console.log(formData);
     const savePost = axios.post("/api/posts", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -101,7 +101,6 @@ export default function CreatePostDialog() {
     setImageFile(null);
     setLanguage("");
     setPopOverOpen(false);
-    router.refresh();
   };
 
   return (

@@ -5,7 +5,7 @@ export async function middleware(req: NextRequest) {
   const cookiesStore = await cookies();
   const user = cookiesStore.get("user");
 
-  console.log(user);
+  //console.log(user);
   if (!user) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
@@ -13,5 +13,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile", "/settings", "/results/:path*", "/dashboard"]
+  matcher: ["/profile", "/settings", "/results/:path*", "/dashboard"],
 };

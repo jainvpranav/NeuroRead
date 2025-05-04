@@ -39,11 +39,11 @@ export async function POST(req: NextRequest) {
       ])
       .select();
 
-    console.log(user);
+    //console.log(user);
 
     if (error || !user) {
       if (error) {
-        console.log(error);
+        //console.log(error);
       }
       return NextResponse.json(
         { error: "Failed to create user" },

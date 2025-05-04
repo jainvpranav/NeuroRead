@@ -1,7 +1,7 @@
 import { Loader2, Brain } from "lucide-react";
 
 export default function PageLoader() {
-  console.log("this is the page loader");
+  //console.log("this is the page loader");
   return (
     <div className="flex min-h-screen flex-col items-center justify-center pattern-bg p-4">
       <div className="size-16 rounded-full gradient-bg flex items-center justify-center mb-4 shadow-lg">

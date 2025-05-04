@@ -19,14 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Eye,
-  Download,
-  Search,
-  Filter,
-  SortAsc,
-  SortDesc,
-} from "lucide-react";
+import { Eye, Download, Search, Filter, SortAsc, SortDesc } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -290,15 +283,6 @@ export default function HistoryPage() {
                                   <Eye className="h-4 w-4" />
                                   <span className="sr-only">View</span>
                                 </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <Download className="h-4 w-4" />
-                                  <span className="sr-only">Download</span>
-                                </Button>
-                                
                               </div>
                             </TableCell>
                           </TableRow>

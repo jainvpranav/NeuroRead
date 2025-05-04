@@ -59,7 +59,7 @@ export default function ResultsPage({
     const formData = new FormData();
     formData.append("diagnosis_id", id);
     const analysis = await axios.post(`/api/results/`, formData);
-    console.log(analysis.data[0]);
+    //console.log(analysis.data[0]);
     setAnalysis(analysis.data[0]);
   };
 
@@ -129,50 +129,71 @@ export default function ResultsPage({
   const handleDownload = () => {
     const doc = new jsPDF();
 
-  // Title
-  doc.setFontSize(18);
-  doc.text("Dyslexia Pattern Recognition", 14, 20);
+    // Title
+    doc.setFontSize(18);
+    doc.text("Dyslexia Pattern Recognition", 14, 20);
 
-  // Basic Info
-  doc.setFontSize(12);
-  doc.text(`Result ID: ${analysis.diagnose_id}`, 14, 30);
-  doc.text(`Student Name: ${analysis.studentName}`, 14, 36);
-  doc.text(`Generated At: ${new Date(analysis.diagnosed_at).toLocaleString()}`, 14, 42);
+    // Basic Info
+    doc.setFontSize(12);
+    doc.text(`Result ID: ${analysis.diagnose_id}`, 14, 30);
+    doc.text(`Student Name: ${analysis.studentName}`, 14, 36);
+    doc.text(
+      `Generated At: ${new Date(analysis.diagnosed_at).toLocaleString()}`,
+      14,
+      42
+    );
 
-  // Table for key metrics
-  autoTable(doc, {
-    startY: 50,
-    head: [["Dyslexia Risk Score", "Motor Variability", "Orthographic Irregularity", "Mirror Writing"]],
-    body: [[
-      analysis.dyslexia_risk_score.toFixed(2),
-      analysis.key_metrics.motorVariability,
-      analysis.key_metrics.orthographicIrregularity,
-      analysis.key_metrics.mirrorWriting.toFixed(2)
-    ]],
-    theme: "striped",
-    styles: { fontSize: 11 },
-    headStyles: { fillColor: [22, 160, 133] },
-  });
+    // Table for key metrics
+    autoTable(doc, {
+      startY: 50,
+      head: [
+        [
+          "Dyslexia Risk Score",
+          "Motor Variability",
+          "Orthographic Irregularity",
+          "Mirror Writing",
+        ],
+      ],
+      body: [
+        [
+          analysis.dyslexia_risk_score.toFixed(2),
+          analysis.key_metrics.motorVariability,
+          analysis.key_metrics.orthographicIrregularity,
+          analysis.key_metrics.mirrorWriting.toFixed(2),
+        ],
+      ],
+      theme: "striped",
+      styles: { fontSize: 11 },
+      headStyles: { fillColor: [22, 160, 133] },
+    });
 
-  // Summary English
-  let finalY = 100;
-  doc.setFontSize(11);
-  doc.text(doc.splitTextToSize(analysis.summary.summary_english, 180), 14, finalY + 6);
+    // Summary English
+    let finalY = 100;
+    doc.setFontSize(11);
+    doc.text(
+      doc.splitTextToSize(analysis.summary.summary_english, 180),
+      14,
+      finalY + 6
+    );
 
-  // Summary Translated
-  finalY = finalY + 6 + doc.getTextDimensions(analysis.summary.summary_english).h;
-  doc.setFontSize(11);
+    // Summary Translated
+    finalY =
+      finalY + 6 + doc.getTextDimensions(analysis.summary.summary_english).h;
+    doc.setFontSize(11);
 
-  // Optional: Image link (not embedded, just link)
-  finalY = finalY + 6 + doc.getTextDimensions(analysis.summary.summary_translated).h;
-  doc.setFontSize(12);
-  doc.text("Uploaded Image:", 14, finalY + 40);
-  doc.setTextColor(0, 0, 255);
-  doc.textWithLink("View Image", 50, finalY + 40, { url: analysis.image_uploaded_link });
-  doc.setTextColor(0, 0, 0); // reset to black
+    // Optional: Image link (not embedded, just link)
+    finalY =
+      finalY + 6 + doc.getTextDimensions(analysis.summary.summary_translated).h;
+    doc.setFontSize(12);
+    doc.text("Uploaded Image:", 14, finalY + 40);
+    doc.setTextColor(0, 0, 255);
+    doc.textWithLink("View Image", 50, finalY + 40, {
+      url: analysis.image_uploaded_link,
+    });
+    doc.setTextColor(0, 0, 0); // reset to black
 
-  // Save
-  doc.save(`report-${analysis.diagnose_id}.pdf`);
+    // Save
+    doc.save(`report-${analysis.diagnose_id}.pdf`);
   };
 
   return (
@@ -189,8 +210,7 @@ export default function ResultsPage({
               Back to Dashboard
             </Link>
             <h1 className="text-3xl font-bold">Analysis Results</h1>
-            <div className="ml-auto flex gap-2">
-            </div>
+            <div className="ml-auto flex gap-2"></div>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -450,31 +470,32 @@ export default function ResultsPage({
                 </Tabs>
               </CardContent>
             </Card>
-            <div>
-            </div>
+            <div></div>
           </div>
-              <Card>
-  <CardFooter className="pt-4">
-    <div className="w-full space-y-2">
-      <h4 className="font-medium text-m text-primary">Report</h4>
+          <Card>
+            <CardFooter className="pt-4">
+              <div className="w-full space-y-2">
+                <h4 className="font-medium text-m text-primary">Report</h4>
 
-      <p className="text-sm text-muted-foreground">
-        {showEnglish
-          ? analysis.summary.summary_english
-          : analysis.summary.summary_translated}
-      </p>
+                <p className="text-sm text-muted-foreground">
+                  {showEnglish
+                    ? analysis.summary.summary_english
+                    : analysis.summary.summary_translated}
+                </p>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-xs p-0 h-auto"
-        onClick={() => setShowEnglish(!showEnglish)}
-      >
-        {showEnglish ? "Show in Regional Language" : "Show in English"}
-      </Button>
-    </div>
-  </CardFooter>
-</Card>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs p-0 h-auto"
+                  onClick={() => setShowEnglish(!showEnglish)}
+                >
+                  {showEnglish
+                    ? "Show in Regional Language"
+                    : "Show in English"}
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
 
           <div className="flex flex-col items-center gap-8 p-6">
             <h2 className="text-3xl font-bold text-gray-800">

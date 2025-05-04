@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
           .select("student_id")
           .eq("student_name", studentName);
       studentDetail = studentDetails;
-      console.log("studentDetails", studentDetails);
+      //console.log("studentDetails", studentDetails);
       if (studentDetailsError && !studentDetails) {
         return NextResponse.json(
           { error: "Student not Found Error" },
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
           );
         }
         uploadedStudentDetails = studentDetailsUploaded;
-        console.log("uploadedStudentDetails", uploadedStudentDetails);
+        //console.log("uploadedStudentDetails", uploadedStudentDetails);
       }
     }
 
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
           cacheControl: "3600",
           upsert: false,
         });
-      console.log("uploadedImage", uploadedImage);
+      //console.log("uploadedImage", uploadedImage);
       if (uploadError && !uploadedImage) {
         return NextResponse.json(
           { error: "Image not uploaded in Bucket" },
@@ -114,20 +114,20 @@ export async function POST(req: NextRequest) {
             { status: 500 }
           );
         }
-        console.log(modelPrediction);
-        console.log(modelPrediction.json);
+        //console.log(modelPrediction);
+        //console.log(modelPrediction.json);
         const modelPredictionResultObject = await modelPrediction.json();
-        console.log(
+        //console.log(
           "modelPredictionResultObject: ",
           modelPredictionResultObject
         );
         const modelPredictionResult = JSON.parse(modelPredictionResultObject);
-        console.log(
+        //console.log(
           "TYpe modelPredictionResult: ",
           typeof modelPredictionResult
         );
-        console.log("modelPredictionResult: ", modelPredictionResult);
-        console.log(
+        //console.log("modelPredictionResult: ", modelPredictionResult);
+        //console.log(
           "modelPredictionResult.overall_score: ",
           modelPredictionResult.overall_score
         );
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
                   },
                 })
                 .select();
-            console.log("diagnosis_uploaded", diagnosis_uploaded);
+            //console.log("diagnosis_uploaded", diagnosis_uploaded);
             if (diagnosis_upload_error && !diagnosis_uploaded) {
               return NextResponse.json(
                 { error: "Diagnosis not recorded" },
@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
                   },
                 })
                 .select();
-            console.log("diagnosis_uploaded", diagnosis_uploaded);
+            //console.log("diagnosis_uploaded", diagnosis_uploaded);
             if (diagnosis_upload_error && !diagnosis_uploaded) {
               return NextResponse.json(
                 { error: "Diagnosis not recorded" },

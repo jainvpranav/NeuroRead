@@ -5,12 +5,12 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.formData();
     const diagnosis_id = data.get("diagnosis_id");
-    console.log(data, "diagnosis", diagnosis_id);
+    //console.log(data, "diagnosis", diagnosis_id);
     const { data: result, error: resultError } = await supabase
       .from("diagnosis")
       .select("*")
       .eq("diagnose_id", diagnosis_id);
-    console.log("result", result);
+    //console.log("result", result);
     if (resultError || !result) {
       return NextResponse.json({ error: "No Result Found" }, { status: 401 });
     }
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         .from("students")
         .select("student_name")
         .eq("student_id", result[0].fk_student_id);
-      console.log("studentName", studentName);
+      //console.log("studentName", studentName);
       if (studentNameError && !studentName) {
         return NextResponse.json(
           { error: "No Student Name Found" },

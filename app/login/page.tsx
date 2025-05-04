@@ -33,9 +33,9 @@ export default function Login() {
   useEffect(() => {
     const checkUser = async () => {
       setIsLoading(true);
-      console.log("checking if the user is present");
+      //console.log("checking if the user is present");
       const cookies = await axios.get("api/auth/cookies");
-      console.log(cookies);
+      //console.log(cookies);
       if (cookies.data.user) {
         router.push("/dashboard");
         return;
