@@ -52,29 +52,29 @@ def main():
     
     # Get device
     device = get_device()
-    print(f"Using device: {device}")
+    # print(f"Using device: {device}")
     
     try:
         # Load model
-        print(f"Loading model from {args.model_path}...")
+        # print(f"Loading model from {args.model_path}...")
         model = load_model(args.model_path)
         model.to(device)
         
         # Segment image into individual letters
-        print(f"Segmenting image {args.image_path} into letters...")
+        # print(f"Segmenting image {args.image_path} into letters...")
         letter_images = segment_letters(args.image_path, args.letters_folder)
         
         if not letter_images:
             print("Error: No letters found in the image")
             return
         
-        print(f"Segmented letters saved to: {args.letters_folder}")
+        # print(f"Segmented letters saved to: {args.letters_folder}")
         
         all_results = []
         
         # Process each letter
         for i, letter_path in enumerate(letter_images):
-            print(f"\nProcessing letter {i+1} of {len(letter_images)}...")
+            # print(f"\nProcessing letter {i+1} of {len(letter_images)}...")
             
             # Preprocess image
             preprocessed_image = preprocess_single_image(letter_path)
@@ -87,6 +87,7 @@ def main():
             preprocessed_image = preprocessed_image.to(device)
             
             # Analyze handwriting
+             
             prediction = analyze_handwriting(model, preprocessed_image, device)
             
             # Interpret results
@@ -94,15 +95,19 @@ def main():
             all_results.append(results)
             
             # Print letter results
-            print(f"Letter {i+1} Results:")
-            print(results)
-            print(f"Dyslexia Indicator Score: {results['dyslexia_score']:.2f}%")
-            print(f"Risk Level: {results['risk_level']}")
-            print(f"Predicted Class: {results['predicted_class']}")
+            # print(f"Letter {i+1} Results:")
+            # print(results)
+            # print(f"Dyslexia Indicator Score: {results['dyslexia_score']:.2f}%")
+            # print(f"Risk Level: {results['risk_level']}")
+            # print(f"Predicted Class: {results['predicted_class']}")
         
         # Calculate and format all final results
-        final_results = calculate_final_results(all_results, letter_images, args.letters_folder)
         
+        final_results = calculate_final_results(all_results, letter_images, args.letters_folder)
+        if 'letter_images' in locals():
+            for path in letter_images:
+                if os.path.exists(path):
+                    os.remove(path)
         # Print final results
         # print_results(final_results)
         
@@ -111,27 +116,25 @@ def main():
         #     with open(args.output_file, 'w') as f:
         #         json.dump(final_results, f, indent=4)
         #     print(f"\nResults saved to {args.output_file}")
-        llama_result = analyze_image_for_spelling(args.image_path)
-        print(llama_result)
+        mirror_score = final_results.get("adjusted_dyslexia_score")
+        llama_result = analyze_image_for_spelling(args.image_path,mirror_score)
+        # print(llama_result)
         translate_text =None
         if args.language != "english":
             details_in_english = llama_result['detailed_text']
-            print("_--------------------------------\n",details_in_english,"\n________--")
+            # print("_--------------------------------\n",details_in_english,"\n________--")
             translate_text = translate(details_in_english,args.language)
       
-        print(translate_text)
-        print("calling resposne")
+        # print(translate_text)
+        # print("calling resposne")
         final_json = response_structure(final_results,llama_result,translate_text)
-        print("final json",final_json)
+        # print("final json",final_json)
+        
+        print(final_json)
         return final_json
         
     except Exception as e:
         print(f"Error: {str(e)}")
     
-    if 'letter_images' in locals():
-            for path in letter_images:
-                if os.path.exists(path):
-                    os.remove(path)
-
 if __name__ == "__main__":
     main()

@@ -15,14 +15,19 @@ def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-def load_prompt_from_file(file_path):
-    """Load the prompt template from a markdown file."""
+def load_prompt_from_file(file_path, mirror_writing_score):
+    print("------------------",mirror_writing_score)
+    """Load the prompt template from a markdown file and replace {Mirror_writing_score}."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            return file.read()
+            content = file.read()
+            # Replace the placeholder with the given parameter
+            content = content.replace("{Mirror_writing_score}", str(mirror_writing_score))
+            return content
     except Exception as e:
         print(f"Error loading prompt file: {str(e)}")
         sys.exit(1)
+
 
 import json
 
@@ -33,13 +38,12 @@ def extract_json_from_text(text):
         json_str = match.group(0)
         try:
             data = json.loads(json_str)
-            print("in jaosn loads")
             return data
         except json.JSONDecodeError:
             return None  # JSON was invalid
     return None  # No JSON found
 
-def analyze_image_for_spelling(image_path):
+def analyze_image_for_spelling(image_path,mirror_score):
     """Analyze an image for spelling mistakes using Llama vision model."""
     model_name = MODEL  
     
@@ -53,9 +57,8 @@ def analyze_image_for_spelling(image_path):
         base64_image = encode_image_to_base64(image_path)
         
         print(f"Analyzing image: {image_path}")
-        prompt_template = load_prompt_from_file("app/prompt.md")
+        prompt_template = load_prompt_from_file("app/prompt.md",mirror_score)
         # Construct the message with image content
-        print(prompt_template)
         messages = [
             {
                 "role": "user",
@@ -79,12 +82,11 @@ def analyze_image_for_spelling(image_path):
             model=model_name,
             messages=messages,
             temperature=0.2,
-            max_tokens=8000,
+            max_tokens=10000,
             stream=False  
         )
         
         # Return the full response
-        print("response----",response)
         response = response.choices[0].message.content
         if isinstance(response,str):
             response_json = extract_json_from_text(response)
@@ -99,13 +101,5 @@ def analyze_image_for_spelling(image_path):
             print(f"Response text: {e.response.text if hasattr(e.response, 'text') else 'No response text'}")
         return f"Error: {str(e)}"
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python script.py <path_to_image>")
-        sys.exit(1)
-    
-    image_path = sys.argv[1]
-    result = analyze_image_for_spelling(image_path)
-    print("\nAnalysis Result:\n")
-    print(result)
+
 

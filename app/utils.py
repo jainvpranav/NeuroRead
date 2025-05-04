@@ -152,7 +152,6 @@ def calculate_final_results(all_results, letter_images, letters_folder):
         'high': 2.0,
         'very_high': 3.0
     }
-    
     weighted_sum = 0
     total_weight = 0
     for result in all_results:
@@ -193,12 +192,14 @@ def calculate_final_results(all_results, letter_images, letters_folder):
         max_adjustment = max(adjustment_factors)
         adjusted_score = min(100, weighted_avg * max_adjustment)
         if adjusted_score < 1:
-            adjusted_score=adjusted_score*100
+            adjusted_score = round(adjusted_score * 100, 2)
 
-        # adjusted_score = max(0, min(100, adjusted_score))  
+
         adjustment_note = "Adjusted based on: " + ", ".join(adjustment_notes)
     else:
         adjusted_score = weighted_avg
+        if adjusted_score < 1:
+            adjusted_score = round(adjusted_score * 100, 2)
         adjustment_note = "No significant adjustments applied"
     
     # Determine overall risk level
@@ -230,7 +231,6 @@ def calculate_final_results(all_results, letter_images, letters_folder):
 def response_structure(pytorch_response, llama_response, translate_response):
     final_json_response=None
     if translate_response == None:
-        print("in translation is none")
         final_json_response = {
             "mirror_writing": pytorch_response.get('adjusted_dyslexia_score'),
             "orthographic_irregularity": llama_response.get('Orthographic_irregularity'),
@@ -239,8 +239,6 @@ def response_structure(pytorch_response, llama_response, translate_response):
             "translated_text": "None"
         }
     else:
-        print("not none")
-        print(type(translate_response))
         final_json_response = {
             "mirror_writing": pytorch_response.get('adjusted_dyslexia_score'),
             "orthographic_irregularity": llama_response.get('Orthographic_irregularity'),
