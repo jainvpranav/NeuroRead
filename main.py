@@ -52,9 +52,12 @@ async def predict(request: PredictRequest):
             raise HTTPException(status_code=500, detail=f"Model prediction failed. Details: {e.stderr}")
 
         # Step 5: Read and return result
-        with open(output_path, "r") as f:
-            result = json.load(f)
-
+        # Step 5: Read and return result
+        if os.path.exists(output_path):
+            with open(output_path, "r") as f:
+                result = json.load(f)
+        else:
+            print(f"File not found: {output_path}")
         return result
 
     except requests.exceptions.RequestException:
