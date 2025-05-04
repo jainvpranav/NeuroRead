@@ -228,10 +228,32 @@ def calculate_final_results(all_results, letter_images, letters_folder):
     
     return final_results
 
-def response_structure(pytorch_response, llama_response, translate_response):
+def find_overall_risk(mirror_score, ortho_score, motor_score):
+    mirror_score = float(mirror_score)
+    ortho_score = float(ortho_score)
+    motor_score= float(motor_score)
+    # Assign weights based on importance
+    mirror_weight = 0.5
+    mototr_weight = 0.3
+    ortho_weight = 0.2
+
+    # Calculate the weighted sum
+    final_score = (
+        mirror_score * mirror_weight +
+        motor_score * mototr_weight +
+        ortho_score * ortho_weight
+    )
+
+    # Optionally, ensure the result is between 0 and 100
+    final_score = max(0, min(final_score, 100))
+
+    return final_score
+
+def response_structure(overall_score,pytorch_response, llama_response, translate_response):
     final_json_response=None
     if translate_response == None:
         final_json_response = {
+            "overall_score":overall_score,
             "mirror_writing": pytorch_response.get('adjusted_dyslexia_score'),
             "orthographic_irregularity": llama_response.get('Orthographic_irregularity'),
             "motor_variability": llama_response.get('Motor_variability'),
@@ -240,6 +262,7 @@ def response_structure(pytorch_response, llama_response, translate_response):
         }
     else:
         final_json_response = {
+            "overall_score":overall_score,
             "mirror_writing": pytorch_response.get('adjusted_dyslexia_score'),
             "orthographic_irregularity": llama_response.get('Orthographic_irregularity'),
             "motor_variability": llama_response.get('Motor_variability'),

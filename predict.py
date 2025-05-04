@@ -12,7 +12,7 @@ import numpy as np
 from datetime import datetime
 from app.model import load_model, analyze_handwriting
 from app.preprocessing import preprocess_single_image
-from app.utils import get_device, interpret_result, preprocess_single_image,print_results,save_uploaded_file,segment_letters,calculate_final_results,response_structure
+from app.utils import get_device, interpret_result, preprocess_single_image,print_results,save_uploaded_file,segment_letters,calculate_final_results,response_structure,find_overall_risk
 from app.llama_evaluate import analyze_image_for_spelling
 from app.translation import translate
 
@@ -127,7 +127,12 @@ def main():
       
         # print(translate_text)
         # print("calling resposne")
-        final_json = response_structure(final_results,llama_result,translate_text)
+        mirror_writing=final_results.get('adjusted_dyslexia_score')
+        orthographic_irregularity=llama_result.get('Orthographic_irregularity')
+        motor_variability=llama_result.get('Motor_variability')
+     
+        overall_score = find_overall_risk(mirror_writing,orthographic_irregularity,motor_variability)
+        final_json = response_structure(overall_score,final_results,llama_result,translate_text)
         # print("final json",final_json)
         
         print(final_json)

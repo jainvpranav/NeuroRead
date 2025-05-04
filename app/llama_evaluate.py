@@ -16,7 +16,6 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 def load_prompt_from_file(file_path, mirror_writing_score):
-    print("------------------",mirror_writing_score)
     """Load the prompt template from a markdown file and replace {Mirror_writing_score}."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
