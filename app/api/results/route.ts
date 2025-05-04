@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
         );
       }
       result[0].studentName = studentName[0].student_name;
-      result[0].results = {};
-      result[0].results.motorVariability = 0;
-      result[0].results.orthographicIrregularity = 0;
-      result[0].results.writingDynamics = 0;
+      // result[0].results = {};
+      // result[0].results.motorVariability = 0;
+      // result[0].results.orthographicIrregularity = 0;
+      // result[0].results.mirrorWriting = 0;
     }
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     let studentName = formData.get("studentName") as string;
     studentName = studentName.trim().toLowerCase();
     const currentUserId = formData.get("currentUserId") as string;
+    const language = formData.get("language") as string;
     let studentDetail: any, uploadedStudentDetails: any;
     if (studentName) {
       const { data: studentDetails, error: studentDetailsError } =
@@ -93,6 +94,7 @@ export async function POST(req: NextRequest) {
       } else {
         const prediction_image_url = {
           image_url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
+          language: language,
         };
         const modelPrediction = await fetch(
           "http://139.5.190.111:8000/predict",
@@ -112,64 +114,89 @@ export async function POST(req: NextRequest) {
             { status: 500 }
           );
         }
-        const modelPredictionResult = await modelPrediction.json();
-        console.log(modelPredictionResult);
-        if (studentDetail ? studentDetail.length === 0 : 0) {
-          const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
-            await supabase
-              .from("diagnosis")
-              .insert({
-                fk_user_id: currentUserId,
-                image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
-                fk_student_id: uploadedStudentDetails[0].student_id,
-                dyslexia_risk_score: 0,
-                key_metrics: {
-                  writingDynamics:
-                    modelPredictionResult.adjusted_dyslexia_score,
-                  motorVariability: 0,
-                  orthographicIrregularity: 0,
-                },
-              })
-              .select();
-          console.log("diagnosis_uploaded", diagnosis_uploaded);
-          if (diagnosis_upload_error && !diagnosis_uploaded) {
+        console.log(modelPrediction);
+        console.log(modelPrediction.json);
+        const modelPredictionResultObject = await modelPrediction.json();
+        console.log(
+          "modelPredictionResultObject: ",
+          modelPredictionResultObject
+        );
+        const modelPredictionResult = JSON.parse(modelPredictionResultObject);
+        console.log(
+          "TYpe modelPredictionResult: ",
+          typeof modelPredictionResult
+        );
+        console.log("modelPredictionResult: ", modelPredictionResult);
+        console.log(
+          "modelPredictionResult.overall_score: ",
+          modelPredictionResult.overall_score
+        );
+        if (modelPredictionResult) {
+          if (studentDetail ? studentDetail.length === 0 : 0) {
+            const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
+              await supabase
+                .from("diagnosis")
+                .insert({
+                  fk_user_id: currentUserId,
+                  image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
+                  fk_student_id: uploadedStudentDetails[0].student_id,
+                  dyslexia_risk_score: modelPredictionResult.overall_score,
+                  key_metrics: {
+                    mirrorWriting: modelPredictionResult.mirror_writing,
+                    motorVariability: modelPredictionResult.motor_variability,
+                    orthographicIrregularity:
+                      modelPredictionResult.orthographic_irregularity,
+                  },
+                  summary: {
+                    summary_english: modelPredictionResult.details_in_english,
+                    summary_translated: modelPredictionResult.translated_text,
+                  },
+                })
+                .select();
+            console.log("diagnosis_uploaded", diagnosis_uploaded);
+            if (diagnosis_upload_error && !diagnosis_uploaded) {
+              return NextResponse.json(
+                { error: "Diagnosis not recorded" },
+                { status: 500 }
+              );
+            }
             return NextResponse.json(
-              { error: "Diagnosis not recorded" },
-              { status: 500 }
+              { diagnosis: diagnosis_uploaded },
+              { status: 200 }
+            );
+          } else {
+            const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
+              await supabase
+                .from("diagnosis")
+                .insert({
+                  fk_user_id: currentUserId,
+                  image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
+                  fk_student_id: studentDetail[0].student_id,
+                  dyslexia_risk_score: modelPredictionResult.overall_score,
+                  key_metrics: {
+                    mirrorWriting: modelPredictionResult.mirror_writing,
+                    motorVariability: modelPredictionResult.motor_variability,
+                    orthographicIrregularity:
+                      modelPredictionResult.orthographic_irregularity,
+                  },
+                  summary: {
+                    summary_english: modelPredictionResult.details_in_english,
+                    summary_translated: modelPredictionResult.translated_text,
+                  },
+                })
+                .select();
+            console.log("diagnosis_uploaded", diagnosis_uploaded);
+            if (diagnosis_upload_error && !diagnosis_uploaded) {
+              return NextResponse.json(
+                { error: "Diagnosis not recorded" },
+                { status: 500 }
+              );
+            }
+            return NextResponse.json(
+              { diagnosis: diagnosis_uploaded },
+              { status: 200 }
             );
           }
-          return NextResponse.json(
-            { diagnosis: diagnosis_uploaded },
-            { status: 200 }
-          );
-        } else {
-          const { data: diagnosis_uploaded, error: diagnosis_upload_error } =
-            await supabase
-              .from("diagnosis")
-              .insert({
-                fk_user_id: currentUserId,
-                image_uploaded_link: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/diagnosis-images//${uploadedImage.path}`,
-                fk_student_id: studentDetail[0].student_id,
-                dyslexia_risk_score: 0,
-                key_metrics: {
-                  writingDynamics:
-                    modelPredictionResult.adjusted_dyslexia_score,
-                  motorVariability: 0,
-                  orthographicIrregularity: 0,
-                },
-              })
-              .select();
-          console.log("diagnosis_uploaded", diagnosis_uploaded);
-          if (diagnosis_upload_error && !diagnosis_uploaded) {
-            return NextResponse.json(
-              { error: "Diagnosis not recorded" },
-              { status: 500 }
-            );
-          }
-          return NextResponse.json(
-            { diagnosis: diagnosis_uploaded },
-            { status: 200 }
-          );
         }
       }
     }

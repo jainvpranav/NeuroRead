@@ -187,17 +187,19 @@ export default function Dashboard() {
                               <SelectValue placeholder="Select language" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="en-IN">English</SelectItem>
-                              <SelectItem value="hi-IN">Hindi</SelectItem>
-                              <SelectItem value="kn-IN">Kannada</SelectItem>
-                              <SelectItem value="gu-IN">Gujrati</SelectItem>
-                              <SelectItem value="pa-IN">Punjabi</SelectItem>
-                              <SelectItem value="ta-IN">Tamil</SelectItem>
-                              <SelectItem value="mr-IN">Marathi</SelectItem>
-                              <SelectItem value="te-IN">Telugu</SelectItem>
-                              <SelectItem value="od-IN">Odia</SelectItem>
-                              <SelectItem value="ml-IN">Malayalam</SelectItem>
-                              <SelectItem value="bn-IN">Bengali</SelectItem>
+                              <SelectItem value="english">English</SelectItem>
+                              <SelectItem value="hindi">Hindi</SelectItem>
+                              <SelectItem value="kannada">Kannada</SelectItem>
+                              <SelectItem value="gujrati">Gujrati</SelectItem>
+                              <SelectItem value="punjabi">Punjabi</SelectItem>
+                              <SelectItem value="tamil">Tamil</SelectItem>
+                              <SelectItem value="marathi">Marathi</SelectItem>
+                              <SelectItem value="telugu">Telugu</SelectItem>
+                              <SelectItem value="odia">Odia</SelectItem>
+                              <SelectItem value="malayalam">
+                                Malayalam
+                              </SelectItem>
+                              <SelectItem value="bengali">Bengali</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>

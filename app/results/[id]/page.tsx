@@ -37,7 +37,7 @@ type Analysis = {
   key_metrics: {
     motorVariability: number;
     orthographicIrregularity: number;
-    writingDynamics: number;
+    mirrorWriting: number;
   };
 };
 
@@ -226,7 +226,10 @@ export default function ResultsPage({
                         <span className="text-sm">Motor Variability</span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.key_metrics.motorVariability.toFixed(1)}/5
+                            {Number(
+                              analysis.key_metrics.motorVariability.toFixed(1)
+                            ) / 20}
+                            /5
                           </span>
                           <TooltipProvider>
                             <Tooltip>
@@ -245,7 +248,7 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={analysis.key_metrics.motorVariability * 20}
+                        value={analysis.key_metrics.motorVariability}
                         className="h-2"
                       />
                     </div>
@@ -257,9 +260,11 @@ export default function ResultsPage({
                         </span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.key_metrics.orthographicIrregularity.toFixed(
-                              1
-                            )}
+                            {Number(
+                              analysis.key_metrics.orthographicIrregularity.toFixed(
+                                1
+                              )
+                            ) / 20}
                             /5
                           </span>
                           <TooltipProvider>
@@ -279,9 +284,7 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={
-                          analysis.key_metrics.orthographicIrregularity * 20
-                        }
+                        value={analysis.key_metrics.orthographicIrregularity}
                         className="h-2"
                       />
                     </div>
@@ -291,7 +294,10 @@ export default function ResultsPage({
                         <span className="text-sm">Writing Dynamics</span>
                         <div className="flex items-center">
                           <span className="text-sm font-medium mr-2">
-                            {analysis.key_metrics.writingDynamics.toFixed(1)}/5
+                            {Number(
+                              analysis.key_metrics.mirrorWriting.toFixed(1)
+                            ) / 20}
+                            /5
                           </span>
                           <TooltipProvider>
                             <Tooltip>
@@ -310,7 +316,7 @@ export default function ResultsPage({
                         </div>
                       </div>
                       <Progress
-                        value={analysis.key_metrics.writingDynamics * 20}
+                        value={analysis.key_metrics.mirrorWriting}
                         className="h-2"
                       />
                     </div>
