@@ -30,12 +30,12 @@ def main():
     
     args = parser.parse_args()
     
-    print("Starting model training...")
-    print(f"Normal handwriting directory: {args.normal_dir}")
-    print(f"Reversal handwriting directory: {args.reversal_dir}")
-    print(f"Correct handwriting directory: {args.correct_dir}")
-    print(f"Model will be saved to: {args.model_save_path}")
-    print(f"Training parameters: batch_size={args.batch_size}, epochs={args.epochs}, lr={args.lr}")
+    # print("Starting model training...")
+    # print(f"Normal handwriting directory: {args.normal_dir}")
+    # print(f"Reversal handwriting directory: {args.reversal_dir}")
+    # print(f"Correct handwriting directory: {args.correct_dir}")
+    # print(f"Model will be saved to: {args.model_save_path}")
+    # print(f"Training parameters: batch_size={args.batch_size}, epochs={args.epochs}, lr={args.lr}")
     
     # Train the model
     train_model(

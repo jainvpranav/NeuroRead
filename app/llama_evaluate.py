@@ -15,6 +15,7 @@ def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
+
 def load_prompt_from_file(file_path, mirror_writing_score):
     """Load the prompt template from a markdown file and replace {Mirror_writing_score}."""
     try:
@@ -55,7 +56,7 @@ def analyze_image_for_spelling(image_path,mirror_score):
         # Encode image to base64
         base64_image = encode_image_to_base64(image_path)
         
-        print(f"Analyzing image: {image_path}")
+        # print(f"Analyzing image: {image_path}")
         prompt_template = load_prompt_from_file("app/prompt.md",mirror_score)
         # Construct the message with image content
         messages = [
