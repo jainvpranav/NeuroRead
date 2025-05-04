@@ -23,6 +23,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import axios from "axios";
 import PageLoader from "@/components/ui/page-loader";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -39,6 +46,7 @@ export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [recentAnalyses, setRecentAnalyses] = useState<any[]>([]);
+  const [language, setLanguage] = useState("");
 
   useEffect(() => {
     const diagnosis = async () => {
@@ -74,6 +82,7 @@ export default function Dashboard() {
     if (selectedFile) formData.append("file", selectedFile);
     formData.append("studentName", studentName.trim());
     if (user) formData.append("currentUserId", user.user_id.toString());
+    formData.append("language", language);
     const fileUploaded = await axios.post("/api/dashboard", formData);
     console.log(fileUploaded);
     return fileUploaded;
@@ -92,29 +101,6 @@ export default function Dashboard() {
 
       if (progress >= 100) {
         clearInterval(interval);
-
-        // Save analysis to history
-        // const history = JSON.parse(
-        //   localStorage.getItem("analysisHistory") || "[]"
-        // );
-        // const newAnalysis = {
-        //   id: Date.now().toString(),
-        //   studentName,
-        //   date: new Date().toISOString(),
-        //   imageUrl: previewUrl,
-        //   // Updated metrics
-        //   results: {
-        //     dyslexiaScore: Math.floor(Math.random() * 100),
-        //     motorVariability: Math.random() * 5 + 1,
-        //     orthographicIrregularity: Math.random() * 5 + 1,
-        //     writingDynamics: Math.random() * 5 + 1,
-        //     id: parseInt(Date.now().toString()),
-        //   },
-        // };
-
-        // history.unshift(newAnalysis);
-        // localStorage.setItem("analysisHistory", JSON.stringify(history));
-
         // Navigate to results page
         console.log(newAnalysis.data);
         router.push(`/results/${newAnalysis.data.diagnosis[0].diagnose_id}`);
@@ -176,18 +162,46 @@ export default function Dashboard() {
                 <TabsContent value="upload">
                   <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="studentName">Student Name</Label>
-                        <Input
-                          id="studentName"
-                          value={studentName}
-                          onChange={(e) => setStudentName(e.target.value)}
-                          placeholder="Enter student name"
-                          className="focus-visible:ring-primary"
-                          required
-                        />
+                      <div className="flex flex-col md:flex-row md:items-end gap-4">
+                        <div className="flex-grow space-y-2">
+                          <Label htmlFor="studentName">Student Name</Label>
+                          <Input
+                            id="studentName"
+                            value={studentName}
+                            onChange={(e) => setStudentName(e.target.value)}
+                            placeholder="Enter student name"
+                            className="focus-visible:ring-primary"
+                            required
+                          />
+                        </div>
+                        {/* Language Selector */}
+                        <div className="w-full md:w-[200px] space-y-2">
+                          <Label className="text-sm font-medium">
+                            View Report in:
+                          </Label>
+                          <Select
+                            value={language}
+                            onValueChange={(value) => setLanguage(value)}
+                          >
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="en-IN">English</SelectItem>
+                              <SelectItem value="hi-IN">Hindi</SelectItem>
+                              <SelectItem value="kn-IN">Kannada</SelectItem>
+                              <SelectItem value="gu-IN">Gujrati</SelectItem>
+                              <SelectItem value="pa-IN">Punjabi</SelectItem>
+                              <SelectItem value="ta-IN">Tamil</SelectItem>
+                              <SelectItem value="mr-IN">Marathi</SelectItem>
+                              <SelectItem value="te-IN">Telugu</SelectItem>
+                              <SelectItem value="od-IN">Odia</SelectItem>
+                              <SelectItem value="ml-IN">Malayalam</SelectItem>
+                              <SelectItem value="bn-IN">Bengali</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
-
                       <div className="grid w-full items-center gap-1.5">
                         <Label htmlFor="handwriting">Handwriting Sample</Label>
                         <div
@@ -255,7 +269,10 @@ export default function Dashboard() {
                           type="submit"
                           className="w-full gradient-bg rounded-full"
                           disabled={
-                            !selectedFile || !studentName || isUploading
+                            !selectedFile ||
+                            !studentName ||
+                            isUploading ||
+                            !language
                           }
                         >
                           Analyze Handwriting

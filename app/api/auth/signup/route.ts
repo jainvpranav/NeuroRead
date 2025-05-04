@@ -19,15 +19,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    function getRandom1to5(): number {
+      return Math.floor(Math.random() * 5) + 1;
+    }
+
     const { data: user, error } = await supabase
       .from("users")
-      .insert([{ email: email, passcode: password, name: name, role: role }])
+      .insert([
+        {
+          name: name,
+          email: email,
+          passcode: password,
+          role: role,
+          profile_pic_link: `${
+            process.env.NEXT_PUBLIC_SUPABASE_URL
+          }/storage/v1/object/public/userprofiles//default_image_${getRandom1to5()}.png`,
+        },
+      ])
       .select();
 
     console.log(user);
 
     if (error || !user) {
-      if(error) {
+      if (error) {
         console.log(error);
       }
       return NextResponse.json(

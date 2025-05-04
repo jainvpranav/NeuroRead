@@ -26,7 +26,6 @@ import {
   Filter,
   SortAsc,
   SortDesc,
-  Trash2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -75,7 +74,6 @@ export default function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [sortBy, setSortBy] = useState<"date" | "score" | "name">("date");
-  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -232,29 +230,6 @@ export default function HistoryPage() {
                 </div>
               </div>
             </CardHeader>
-
-            {/* Language Selector */}
-            <div className="px-6 py-4 flex items-center gap-2">
-              <span className="text-sm font-medium">View in:</span>
-              <Select
-                value={language}
-                onValueChange={(value) => setLanguage(value)}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="hi">Hindi</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="ta">Tamil</SelectItem>
-                  <SelectItem value="te">Telugu</SelectItem>
-                  <SelectItem value="bn">Bengali</SelectItem>
-                  <SelectItem value="ml">Malayalam</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             <CardContent className="p-0">
               {filteredAndSortedHistory.length > 0 ? (

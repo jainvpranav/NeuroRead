@@ -1,23 +1,45 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Heart, Share2, MessageCircle, Bookmark, MoreHorizontal } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Heart,
+  Share2,
+  MessageCircle,
+  Bookmark,
+  MoreHorizontal,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface PostCardProps {
-  post: any
-  index: number
-  isLiked: boolean
-  tags: string
-  onLike: (e: any, index: number) => void
+  post: any;
+  index: number;
+  isLiked: boolean;
+  tags: string;
+  onLike: (e: any, index: number) => void;
 }
 
-export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
+export function PostCard({
+  post,
+  index,
+  isLiked,
+  tags,
+  onLike,
+}: PostCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
@@ -36,19 +58,26 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Avatar className="h-9 w-9 border border-purple-500/30">
-                <AvatarImage src={post.profile_pic_link || "/placeholder.svg"} />
+                <AvatarImage
+                  src={post.profile_pic_link || "/placeholder.svg"}
+                />
                 <AvatarFallback className="bg-purple-800 text-white">
                   {post.username?.substring(0, 2).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{post.username}</span>
-                <span className="text-xs text-gray-400">{post.timestamp || "Just now"}</span>
+                <span className="text-xs text-gray-400">
+                  {post.timestamp || "Just now"}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-purple-900/30 text-purple-200 border-purple-500/30 text-xs">
-                {post.tags || "Post"}
+              <Badge
+                variant="outline"
+                className="bg-purple-900/30 text-purple-200 border-purple-500/30 text-xs"
+              >
+                #{post.tags.split("|").join(" #") || "Post"}
               </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -57,9 +86,15 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-gray-800 border-gray-700 text-white">
-                  <DropdownMenuItem className="hover:bg-gray-700">Save Post</DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-700">Report</DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-700">Hide</DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-gray-700">
+                    Save Post
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-gray-700">
+                    Report
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:bg-gray-700">
+                    Hide
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -67,7 +102,9 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
         </CardHeader>
 
         <CardContent className="p-3 pt-0">
-          {post.description && <p className="text-sm text-gray-200 mb-3">{post.description}</p>}
+          {post.description && (
+            <p className="text-sm text-gray-200 mb-3">{post.description}</p>
+          )}
 
           {post.image_link && (
             <motion.div
@@ -92,9 +129,19 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
               onClick={(e) => onLike(e, index)}
             >
               <Heart
-                className={`h-5 w-5 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-400 group-hover:text-red-400"} transition-colors`}
+                className={`h-5 w-5 ${
+                  isLiked
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-400 group-hover:text-red-400"
+                } transition-colors`}
               />
-              <span className={`${isLiked ? "text-red-500" : "text-gray-400 group-hover:text-red-400"}`}>
+              <span
+                className={`${
+                  isLiked
+                    ? "text-red-500"
+                    : "text-gray-400 group-hover:text-red-400"
+                }`}
+              >
                 {post.likes || 0}
               </span>
             </motion.button>
@@ -105,14 +152,14 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
               whileTap={{ scale: 1.2 }}
               className="text-gray-400 hover:text-purple-400"
               onClick={(e) => {
-                e.preventDefault()
+                e.preventDefault();
                 navigator
                   .share({
                     title: `${post.username}'s post`,
                     text: post.description,
                     url: window.location.href,
                   })
-                  .catch((err) => console.error("Error sharing:", err))
+                  .catch((err) => console.error("Error sharing:", err));
               }}
             >
               <Share2 className="h-5 w-5" />
@@ -121,5 +168,5 @@ export function PostCard({ post, index, isLiked, tags, onLike }: PostCardProps) 
         </CardFooter>
       </Card>
     </motion.div>
-  )
+  );
 }

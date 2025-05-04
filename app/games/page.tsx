@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import PageLoader from "@/components/ui/page-loader"
-import { Suspense, useState } from "react"
-import { motion } from "framer-motion"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { HeroSection } from "@/components/hero-section"
-import { GameCard } from "@/components/game-card"
-import { Navbar } from "@/components/navbar"
+import PageLoader from "@/components/ui/page-loader";
+import { Suspense, useState } from "react";
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { HeroSection } from "@/components/hero-section";
+import { GameCard } from "@/components/game-card";
+import { Navbar } from "@/components/navbar";
 
 export default function GamesPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
   const games = [
     {
@@ -19,7 +19,7 @@ export default function GamesPage() {
       category: "Reading",
       level: "Beginner",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/2c9h67mizr6fhkl8",
-      image: "/game1.png",
+      image: "/game3.jpg",
     },
     {
       title: "Spelling Sprint",
@@ -35,18 +35,18 @@ export default function GamesPage() {
       category: "Vocabulary",
       level: "Advanced",
       link: "https://app.lexercise.com/mylexercise/index/index/demo/sxpdew5apwhq747m",
-      image: "/game3.jpg",
+      image: "/game1.png",
     },
-  ]
+  ];
 
   const filteredGames = games.filter(
     (game) =>
       game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       game.category.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
   return (
-      <Suspense fallback={<PageLoader />}>
+    <Suspense fallback={<PageLoader />}>
       <div className="flex min-h-screen flex-col bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <Navbar />
         <main className="flex flex-col items-center p-6">
@@ -81,8 +81,14 @@ export default function GamesPage() {
           </motion.div>
 
           {filteredGames.length === 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center p-8">
-              <p className="text-gray-500">No games found matching your search. Try a different term.</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center p-8"
+            >
+              <p className="text-gray-500">
+                No games found matching your search. Try a different term.
+              </p>
             </motion.div>
           )}
 
@@ -92,11 +98,15 @@ export default function GamesPage() {
             transition={{ delay: 0.5 }}
             className="mt-12 text-center"
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Coming Soon</h2>
-            <p className="text-gray-600">More exciting games are on the way! Check back soon for updates.</p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Coming Soon
+            </h2>
+            <p className="text-gray-600">
+              More exciting games are on the way! Check back soon for updates.
+            </p>
           </motion.div>
         </main>
       </div>
-      </Suspense>
-  )
+    </Suspense>
+  );
 }
