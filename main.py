@@ -8,9 +8,10 @@ import json
 
 app = FastAPI()
 
-# Request model to receive the image URL
+# Updated Request model to receive the image URL and language
 class PredictRequest(BaseModel):
     image_url: str
+    language: str  # Add this line
 
 @app.post("/predict")
 async def predict(request: PredictRequest):
@@ -39,7 +40,8 @@ async def predict(request: PredictRequest):
             "predict.py",
             "--image_path", image_path,
             "--model_path", "models/dyslexia_model.pth",
-            "--output_file", output_path
+            "--output_file", output_path,
+            "--language", request.language  # Pass the language parameter
         ]
 
         try:

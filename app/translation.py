@@ -39,6 +39,7 @@ def get_target_language_code(language):
 
 
 def translate(input_text,language):
+    print("input text in translation",input_text)
     client = SarvamAI(
         api_subscription_key=os.getenv("TRANSLATION_API"),
     )
@@ -50,7 +51,5 @@ def translate(input_text,language):
         source_language_code="auto",
         target_language_code=target_language_code,
     )
-
-    print(response)
-
-translate("Hello","hindi")
+    response_dict = response.dict()
+    return response_dict
