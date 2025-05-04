@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Loader2, Mail, Lock, User } from "lucide-react";
+import { Brain, Loader2, Mail, Lock, User, Phone } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
@@ -32,7 +32,7 @@ export default function Signup() {
   const [role, setRole] = useState("parent");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [mobile, setMobile] = useState("");
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -50,7 +50,9 @@ export default function Signup() {
         email,
         password,
         role,
+        mobile,
       });
+
 
       router.push("/login");
     } catch (err: any) {
@@ -107,6 +109,21 @@ export default function Signup() {
                             placeholder="John Doe"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="mobile"
+                            type="text"
+                            placeholder="Mobile"
+                            value={mobile}
+                            onChange={(e) => setMobile(e.target.value)}
                             className="pl-10"
                             required
                           />

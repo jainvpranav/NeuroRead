@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name, role } = await req.json();
+    const { email, password, name, role, mobile } = await req.json();
 
     const { data: existingUser } = await supabase
       .from("users")
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
           profile_pic_link: `${
             process.env.NEXT_PUBLIC_SUPABASE_URL
           }/storage/v1/object/public/userprofiles//default_image_${getRandom1to5()}.png`,
+          mobile: mobile,
         },
       ])
       .select();
